@@ -373,7 +373,7 @@ namespace pu::ui::elm
                             eicx = eicx+((eicw-eicw)/2);
                         }
                         ex = (eicx + eicw + 25);
-                        Drawer->RenderTextureScaled(curicon, eicx, eicy, eicw, eich);
+                        Drawer->RenderTextureScaled(curexticon, eicx, eicy, eicw, eich);
                     }
                     Drawer->RenderTexture(curext, ex, ey);
                 }
