@@ -237,6 +237,10 @@ namespace pu::ui::elm
     {
         if(!this->itms.empty()) for(s32 i = 0; i < this->itms.size(); i++) delete this->itms[i];
         this->itms.clear();
+        this->loadednames.clear();
+        this->loadedicons.clear();
+        this->loadedext.clear();
+        this->loadedexticons.clear();
     }
 
     void Menu::SetCooldownEnabled(bool Cooldown)
@@ -362,7 +366,7 @@ namespace pu::ui::elm
                         s32 eicw = (this->isize/3 - 10);
                         s32 eich = eicw;
                         s32 eicx = tx;
-                        s32 eicy = ey - this->isize/8;
+                        s32 eicy = ey - this->isize/16;
                         if(efactor < 1)
                         {
                             eich = eich*efactor;
@@ -372,7 +376,7 @@ namespace pu::ui::elm
                             eicw = eicw/efactor;
                             eicx = eicx+((eicw-eicw)/2);
                         }
-                        ex = (eicx + eicw + 25);
+                        ex = (eicx + eicw + 10);
                         Drawer->RenderTextureScaled(curexticon, eicx, eicy, eicw, eich);
                     }
                     Drawer->RenderTexture(curext, ex, ey);
