@@ -2,14 +2,14 @@
 
 namespace pu::ui::elm
 {
-    Rectangle::Rectangle(s32 X, s32 Y, s32 Width, s32 Height, Color RecColor, s32 BorderRadius) : Element::Element()
+    Rectangle::Rectangle(s32 X, s32 Y, s32 Width, s32 Height, Color RecColor, s32 Radius) : Element::Element()
     {
         this->x = X;
         this->y = Y;
         this->w = Width;
         this->h = Height;
         this->clr = RecColor;
-        this->borderr = BorderRadius;
+        this->r = Radius;
     }
 
     s32 Rectangle::GetX()
@@ -52,16 +52,6 @@ namespace pu::ui::elm
         this->h = Height;
     }
 
-    s32 Rectangle::GetBorderRadius()
-    {
-        return this->h;
-    }
-
-    void Rectangle::SetBorderRadius(s32 Radius)
-    {
-        this->borderr = Radius;
-    }
-
     Color Rectangle::GetColor()
     {
         return this->clr;
@@ -72,11 +62,21 @@ namespace pu::ui::elm
         this->clr = RecColor;
     }
 
+    s32 Rectangle::GetRadius()
+    {
+        return this->r;
+    }
+
+    void Rectangle::SetRadius(s32 Radius)
+    {
+        this->r = Radius;
+    }
+
     void Rectangle::OnRender(render::Renderer *Drawer)
     {
         s32 rdx = this->GetProcessedX();
         s32 rdy = this->GetProcessedY();
-        Drawer->RenderRectangleFill(this->clr, rdx, rdy, this->w, this->h);
+        Drawer->RenderRoundedRectangleFill(this->clr, rdx, rdy, this->w, this->h, this->r);
     }
 
     void Rectangle::OnInput(u64 Down, u64 Up, u64 Held, bool Touch, bool Focus)
