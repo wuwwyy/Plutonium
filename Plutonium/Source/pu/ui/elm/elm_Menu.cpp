@@ -342,160 +342,163 @@ namespace pu::ui::elm
 
     void Menu::OnInput(u64 Down, u64 Up, u64 Held, bool Touch, bool Focus)
     {
-        if(basestatus == 1)
+        if(!this->itms.empty())
         {
-            auto curtime = std::chrono::steady_clock::now();
-            auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(curtime - basetime).count();
-            if(diff >= 150)
+            if(basestatus == 1)
             {
-                basestatus = 2;
-            }
-        }
-        if(Touch)
-        {
-            touchPosition tch;
-            hidTouchRead(&tch, 0);
-            s32 cx = this->x;
-            s32 cy = this->y;
-            s32 cw = this->w;
-            s32 ch = this->isize;
-            s32 its = this->ishow;
-            if(its > this->itms.size()) its = this->itms.size();
-            if((its + this->fisel) > this->itms.size()) its = this->itms.size() - this->fisel;
-            for(s32 i = this->fisel; i < (this->fisel + its); i++)
-            {
-                if(((cx + cw) > tch.px) && (tch.px > cx) && ((cy + ch) > tch.py) && (tch.py > cy))
+                auto curtime = std::chrono::steady_clock::now();
+                auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(curtime - basetime).count();
+                if(diff >= 150)
                 {
-                    this->dtouch = true;
-                    this->previsel = this->isel;
-                    this->isel = i;
-                    (this->onselch)();
-                    if(i == this->isel) this->selfact = 255;
-                    else if(i == this->previsel) this->pselfact = 0;
-                    break;
-                }
-                cy += this->isize;
-            }
-        }
-        else if(this->dtouch)
-        {
-            if((this->selfact >= 255) && (this->pselfact <= 0))
-            {
-                if(this->icdown) this->icdown = false;
-                else (this->itms[this->isel]->GetCallback(0))();
-                this->dtouch = false;
-            }
-        }
-        else
-        {
-            if((Down & KEY_DDOWN) || (Down & KEY_LSTICK_DOWN) || (Held & KEY_RSTICK_DOWN))
-            {
-                bool move = true;
-                if(Held & KEY_RSTICK_DOWN)
-                {
-                    move = false;
-                    if(basestatus == 0)
-                    {
-                        basetime = std::chrono::steady_clock::now();
-                        basestatus = 1;
-                    }
-                    else if(basestatus == 2)
-                    {
-                        basestatus = 0;
-                        move = true;
-                    }
-                }
-                if(move)
-                {
-                    if(this->isel < (this->itms.size() - 1))
-                    {
-                        if((this->isel - this->fisel) == (this->ishow - 1))
-                        {
-                            this->fisel++;
-                            this->isel++;
-                            (this->onselch)();
-                            ReloadItemRenders();
-                        }
-                        else
-                        {
-                            this->previsel = this->isel;
-                            this->isel++;
-                            (this->onselch)();
-                            if(!this->itms.empty()) for(s32 i = 0; i < this->itms.size(); i++)
-                            {
-                                if(i == this->isel) this->selfact = 0;
-                                else if(i == this->previsel) this->pselfact = 255;
-                            }
-                            ReloadItemRenders();
-                        }
-                    }
-                    else
-                    {
-                        this->isel = 0;
-                        this->fisel = 0;
-                        ReloadItemRenders();
-                    }
+                    basestatus = 2;
                 }
             }
-            else if((Down & KEY_DUP) || (Down & KEY_LSTICK_UP) || (Held & KEY_RSTICK_UP))
+            if(Touch)
             {
-                bool move = true;
-                if(Held & KEY_RSTICK_UP)
+                touchPosition tch;
+                hidTouchRead(&tch, 0);
+                s32 cx = this->x;
+                s32 cy = this->y;
+                s32 cw = this->w;
+                s32 ch = this->isize;
+                s32 its = this->ishow;
+                if(its > this->itms.size()) its = this->itms.size();
+                if((its + this->fisel) > this->itms.size()) its = this->itms.size() - this->fisel;
+                for(s32 i = this->fisel; i < (this->fisel + its); i++)
                 {
-                    move = false;
-                    if(basestatus == 0)
+                    if(((cx + cw) > tch.px) && (tch.px > cx) && ((cy + ch) > tch.py) && (tch.py > cy))
                     {
-                        basetime = std::chrono::steady_clock::now();
-                        basestatus = 1;
+                        this->dtouch = true;
+                        this->previsel = this->isel;
+                        this->isel = i;
+                        (this->onselch)();
+                        if(i == this->isel) this->selfact = 255;
+                        else if(i == this->previsel) this->pselfact = 0;
+                        break;
                     }
-                    else if(basestatus == 2)
-                    {
-                        basestatus = 0;
-                        move = true;
-                    }
+                    cy += this->isize;
                 }
-                if(move)
+            }
+            else if(this->dtouch)
+            {
+                if((this->selfact >= 255) && (this->pselfact <= 0))
                 {
-                    if(this->isel > 0)
-                    {
-                        if(this->isel == this->fisel)
-                        {
-                            this->fisel--;
-                            this->isel--;
-                            (this->onselch)();
-                            ReloadItemRenders();
-                        }
-                        else
-                        {
-                            this->previsel = this->isel;
-                            this->isel--;
-                            (this->onselch)();
-                            if(!this->itms.empty()) for(s32 i = 0; i < this->itms.size(); i++)
-                            {
-                                if(i == this->isel) this->selfact = 0;
-                                else if(i == this->previsel) this->pselfact = 255;
-                            }
-                            ReloadItemRenders();
-                        }
-                    }
-                    else
-                    {
-                        this->isel = this->itms.size() - 1;
-                        this->fisel = 0;
-                        if(this->itms.size() >= this->ishow) this->fisel = this->itms.size() - this->ishow;
-                        ReloadItemRenders();
-                    }
+                    if(this->icdown) this->icdown = false;
+                    else (this->itms[this->isel]->GetCallback(0))();
+                    this->dtouch = false;
                 }
             }
             else
             {
-                s32 ipc = this->itms[this->isel]->GetCallbackCount();
-                if(ipc > 0) for(s32 i = 0; i < ipc; i++)
+                if((Down & KEY_DDOWN) || (Down & KEY_LSTICK_DOWN) || (Held & KEY_RSTICK_DOWN))
                 {
-                    if(Down & this->itms[this->isel]->GetCallbackKey(i))
+                    bool move = true;
+                    if(Held & KEY_RSTICK_DOWN)
                     {
-                        if(this->icdown) this->icdown = false;
-                        else (this->itms[this->isel]->GetCallback(i))();
+                        move = false;
+                        if(basestatus == 0)
+                        {
+                            basetime = std::chrono::steady_clock::now();
+                            basestatus = 1;
+                        }
+                        else if(basestatus == 2)
+                        {
+                            basestatus = 0;
+                            move = true;
+                        }
+                    }
+                    if(move)
+                    {
+                        if(this->isel < (this->itms.size() - 1))
+                        {
+                            if((this->isel - this->fisel) == (this->ishow - 1))
+                            {
+                                this->fisel++;
+                                this->isel++;
+                                (this->onselch)();
+                                ReloadItemRenders();
+                            }
+                            else
+                            {
+                                this->previsel = this->isel;
+                                this->isel++;
+                                (this->onselch)();
+                                if(!this->itms.empty()) for(s32 i = 0; i < this->itms.size(); i++)
+                                {
+                                    if(i == this->isel) this->selfact = 0;
+                                    else if(i == this->previsel) this->pselfact = 255;
+                                }
+                                ReloadItemRenders();
+                            }
+                        }
+                        else
+                        {
+                            this->isel = 0;
+                            this->fisel = 0;
+                            ReloadItemRenders();
+                        }
+                    }
+                }
+                else if((Down & KEY_DUP) || (Down & KEY_LSTICK_UP) || (Held & KEY_RSTICK_UP))
+                {
+                    bool move = true;
+                    if(Held & KEY_RSTICK_UP)
+                    {
+                        move = false;
+                        if(basestatus == 0)
+                        {
+                            basetime = std::chrono::steady_clock::now();
+                            basestatus = 1;
+                        }
+                        else if(basestatus == 2)
+                        {
+                            basestatus = 0;
+                            move = true;
+                        }
+                    }
+                    if(move)
+                    {
+                        if(this->isel > 0)
+                        {
+                            if(this->isel == this->fisel)
+                            {
+                                this->fisel--;
+                                this->isel--;
+                                (this->onselch)();
+                                ReloadItemRenders();
+                            }
+                            else
+                            {
+                                this->previsel = this->isel;
+                                this->isel--;
+                                (this->onselch)();
+                                if(!this->itms.empty()) for(s32 i = 0; i < this->itms.size(); i++)
+                                {
+                                    if(i == this->isel) this->selfact = 0;
+                                    else if(i == this->previsel) this->pselfact = 255;
+                                }
+                                ReloadItemRenders();
+                            }
+                        }
+                        else
+                        {
+                            this->isel = this->itms.size() - 1;
+                            this->fisel = 0;
+                            if(this->itms.size() >= this->ishow) this->fisel = this->itms.size() - this->ishow;
+                            ReloadItemRenders();
+                        }
+                    }
+                }
+                else
+                {
+                    s32 ipc = this->itms[this->isel]->GetCallbackCount();
+                    if(ipc > 0) for(s32 i = 0; i < ipc; i++)
+                    {
+                        if(Down & this->itms[this->isel]->GetCallbackKey(i))
+                        {
+                            if(this->icdown) this->icdown = false;
+                            else (this->itms[this->isel]->GetCallback(i))();
+                        }
                     }
                 }
             }
