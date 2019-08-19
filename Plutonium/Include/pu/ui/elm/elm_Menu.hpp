@@ -35,11 +35,21 @@ namespace pu::ui::elm
             std::string GetIcon();
             void SetIcon(std::string Icon);
             bool HasIcon();
+            std::string GetRichName();
+            void SetRichName(std::string Name);
+            bool HasRichName();
+            std::string GetRichIcon();
+            void SetRichIcon(std::string Icon);
+            bool HasRichIcon();
         private:
             String name;
             Color clr;
             bool hasicon;
+            bool hasrichname;
+            bool hasrichicon;
             std::string icon;
+            std::string richname;
+            std::string richicon;
             std::vector<std::function<void()>> cbs;
             std::vector<u64> cbipts;
     };
@@ -96,8 +106,11 @@ namespace pu::ui::elm
             std::chrono::time_point<std::chrono::steady_clock> basetime;
             std::function<void()> onselch;
             std::vector<MenuItem*> itms;
-            render::NativeFont font;
+            render::NativeFont basefont;
+            render::NativeFont richfont;
             std::vector<render::NativeTexture> loadednames;
             std::vector<render::NativeTexture> loadedicons;
+            std::vector<render::NativeTexture> loadedrichnames;
+            std::vector<render::NativeTexture> loadedrichicons;
     };
 }

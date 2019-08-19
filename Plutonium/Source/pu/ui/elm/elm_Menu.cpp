@@ -7,6 +7,8 @@ namespace pu::ui::elm
         this->clr = { 10, 10, 10, 255 };
         this->name = Name;
         this->hasicon = false;
+        this->hasrichname = false;
+        this->hasrichicon = false;
     }
 
     String MenuItem::GetName()
@@ -72,6 +74,43 @@ namespace pu::ui::elm
         return this->hasicon;
     }
 
+    std::string MenuItem::GetRichName()
+    {
+        return this->richname;
+    }
+
+    void MenuItem::SetRichName(std::string Name)
+    {
+        this->richname = Name;
+        this->hasrichname = true;
+    }
+
+    bool MenuItem::HasRichName()
+    {
+        return this->hasrichname;
+    }
+
+    std::string MenuItem::GetRichIcon()
+    {
+        return this->richicon;
+    }
+
+    void MenuItem::SetRichIcon(std::string Icon)
+    {
+        std::ifstream ifs(Icon);
+        if(ifs.good())
+        {
+            this->richicon = Icon;
+            this->hasrichicon = true;
+        }
+        ifs.close();
+    }
+
+    bool MenuItem::HasRichIcon()
+    {
+        return this->hasrichicon;
+    }
+
     Menu::Menu(s32 X, s32 Y, s32 Width, Color OptionColor, s32 ItemSize, s32 ItemsToShow) : Element::Element()
     {
         this->x = X;
@@ -91,7 +130,8 @@ namespace pu::ui::elm
         this->dtouch = false;
         this->fcs = { 40, 40, 40, 255 };
         this->basestatus = 0;
-        this->font = render::LoadDefaultFont(25);
+        this->basefont = render::LoadDefaultFont((ItemSize/3));
+        this->richfont = render::LoadDefaultFont(ItemSize/4);
     }
 
     Menu::~Menu()
@@ -200,6 +240,8 @@ namespace pu::ui::elm
         this->itms.clear();
         this->loadednames.clear();
         this->loadedicons.clear();
+        this->loadedrichnames.clear();
+        this->loadedrichicons.clear();
     }
 
     void Menu::SetCooldownEnabled(bool Cooldown)
@@ -268,6 +310,8 @@ namespace pu::ui::elm
                 auto loadedidx = i - this->fisel;
                 auto curname = this->loadednames[loadedidx];
                 auto curicon = this->loadedicons[loadedidx];
+                auto currichname = this->loadedrichnames[loadedidx];
+                auto currichicon = this->loadedrichicons[loadedidx];
                 if(this->isel == i)
                 {
                     Drawer->RenderRectangleFill(this->clr, cx, cy, cw, ch);
@@ -290,9 +334,11 @@ namespace pu::ui::elm
                 }
                 else Drawer->RenderRectangleFill(this->clr, cx, cy, cw, ch);
                 MenuItem *itm = this->itms[i];
-                s32 xh = render::GetTextHeight(this->font, itm->GetName());
+                s32 xh = render::GetTextHeight(this->basefont, itm->GetName());
                 s32 tx = (cx + 25);
-                s32 ty = ((ch - xh) / 2) + cy;
+                s32 ty;
+                if(!itm->HasRichName()) ty = ((ch - xh) / 2) + cy;
+                else ty = (ch/3) - (xh/2) + cy;
                 if(itm->HasIcon())
                 {
                     float factor = (float)render::GetTextureHeight(curicon)/(float)render::GetTextureWidth(curicon);
@@ -311,6 +357,33 @@ namespace pu::ui::elm
                         icx = icx+((this->isize-icw)/2);
                     }
                     Drawer->RenderTextureScaled(curicon, icx, icy, icw, ich);
+                }
+                if(itm->HasRichName())
+                {
+                    s32 rxh = render::GetTextHeight(this->basefont, itm->GetRichName());
+                    s32 rtx = tx;
+                    s32 rty = (((ch/3) - rxh) / 2) + (cy + (ch * 2)/3);
+                    if(itm->HasRichIcon())
+                    {
+                        float rfactor = (float)render::GetTextureHeight(currichicon)/(float)render::GetTextureWidth(currichicon);
+                        s32 rich = (ch/3);
+                        s32 ricw = rich;
+                        s32 ricx = rtx;
+                        s32 ricy = rty;
+                        if(rfactor < 1)
+                        {
+                            rich = rich*rfactor;
+                            ricy = ricy+((ricw-rich)/2);
+                        }
+                        else
+                        {
+                            ricw = ricw/rfactor;
+                            ricx = ricx+((rich-ricw)/2);
+                        }
+                        rtx = ricx + ricw + 10;
+                        Drawer->RenderTextureScaled(currichicon, ricx, ricy, ricw, rich);
+                    }
+                    Drawer->RenderTexture(currichname, rtx, rty);
                 }
                 Drawer->RenderTexture(curname, tx, ty);
                 cy += ch;
@@ -509,15 +582,19 @@ namespace pu::ui::elm
     {
         for(u32 i = 0; i < this->loadednames.size(); i++) render::DeleteTexture(this->loadednames[i]);
         for(u32 i = 0; i < this->loadedicons.size(); i++) render::DeleteTexture(this->loadedicons[i]);
+        for(u32 i = 0; i < this->loadedrichnames.size(); i++) render::DeleteTexture(this->loadedrichnames[i]);
+        for(u32 i = 0; i < this->loadedrichicons.size(); i++) render::DeleteTexture(this->loadedrichnames[i]);
         this->loadednames.clear();
         this->loadedicons.clear();
+        this->loadedrichnames.clear();
+        this->loadedrichicons.clear();
         s32 its = this->ishow;
         if(its > this->itms.size()) its = this->itms.size();
         if((its + this->fisel) > this->itms.size()) its = this->itms.size() - this->fisel;
         for(s32 i = this->fisel; i < (its + this->fisel); i++)
         {
             auto strname = this->itms[i]->GetName();
-            auto tex = render::RenderText(this->font, strname, this->itms[i]->GetColor());
+            auto tex = render::RenderText(this->basefont, strname, this->itms[i]->GetColor());
             this->loadednames.push_back(tex);
             if(this->itms[i]->HasIcon())
             {
@@ -526,6 +603,24 @@ namespace pu::ui::elm
                 this->loadedicons.push_back(icontex);
             }
             else this->loadedicons.push_back(NULL);
+            if(this->itms[i]->HasRichName())
+            {
+                auto rstrname = this->itms[i]->GetRichName();
+                auto rtex = render::RenderText(this->richfont, rstrname, this->itms[i]->GetColor());
+                this->loadedrichnames.push_back(rtex);
+                if(this->itms[i]->HasRichIcon())
+                {
+                    auto rstricon = this->itms[i]->GetRichIcon();
+                    auto ricontex = render::LoadImage(rstricon);
+                    this->loadedrichicons.push_back(ricontex);
+                }
+                else this->loadedrichicons.push_back(NULL);
+            }
+            else
+            {
+                this->loadedrichnames.push_back(NULL);
+                this->loadedrichicons.push_back(NULL);
+            }
         }
     }
 }
