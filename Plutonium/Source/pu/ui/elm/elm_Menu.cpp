@@ -334,7 +334,7 @@ namespace pu::ui::elm
                 }
                 else Drawer->RenderRectangleFill(this->clr, cx, cy, cw, ch);
                 MenuItem *itm = this->itms[i];
-                s32 xh = render::GetTextHeight(this->basefont, itm->GetName());
+                s32 xh = render::GetTextureHeight(curname);
                 s32 tx = (cx + 25);
                 s32 ty;
                 if(!itm->HasRichName()) ty = ((ch - xh) / 2) + cy;
@@ -360,16 +360,16 @@ namespace pu::ui::elm
                 }
                 if(itm->HasRichName())
                 {
-                    s32 rxh = render::GetTextHeight(this->basefont, itm->GetRichName());
+                    s32 rxh = render::GetTextureHeight(currichname);
                     s32 rtx = tx;
-                    s32 rty = (((ch/3) - rxh) / 2) + (cy + (ch * 2)/3);
+                    s32 rty = cy + (ch/3)*2 + ((ch/3) - rxh)/2;
                     if(itm->HasRichIcon())
                     {
                         float rfactor = (float)render::GetTextureHeight(currichicon)/(float)render::GetTextureWidth(currichicon);
-                        s32 rich = (ch/3);
-                        s32 ricw = rich;
+                        s32 ricw = (ch/3);
+                        s32 rich = ricw;
                         s32 ricx = rtx;
-                        s32 ricy = rty;
+                        s32 ricy = (cy + (ch/3)*2);
                         if(rfactor < 1)
                         {
                             rich = rich*rfactor;
