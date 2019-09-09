@@ -25,8 +25,6 @@ namespace pu::ui::render
             SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
             IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG | IMG_INIT_TIF | IMG_INIT_WEBP);
             TTF_Init();
-            Mix_Init(MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG);
-            Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096);
             this->initialized = true;
             this->basea = -1;
             this->basex = 0;

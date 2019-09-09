@@ -17,8 +17,8 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 BUILD		:=	Build
 TARGET		:=  pu
-SOURCES		:=	Source Source/pu Source/pu/audio Source/pu/ui Source/pu/ui/elm Source/pu/ui/extras Source/pu/ui/render Source/pu/web
-INCLUDES	:=	Include Include/pu Include/pu/audio Include/pu/ui Include/pu/ui/elm Include/pu/ui/extras Include/pu/ui/render Include/pu/web
+SOURCES		:=	Source Source/pu Source/pu/ui Source/pu/ui/elm Source/pu/ui/extras Source/pu/ui/render
+INCLUDES	:=	Include Include/pu Include/pu/ui Include/pu/ui/elm Include/pu/ui/extras Include/pu/ui/render
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -37,7 +37,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=${DEVKITPRO}/libnx/switch.specs -g $(ARCH) -Wl,-r,-Map,$(notdir $*.map)
 
-LIBS	:=  -lnx -lfreetype -lSDL2_ttf -lSDL2_mixer -lmodplug -lmpg123 -lvorbisidec -logg -lSDL2_gfx -lSDL2_image -lSDL2 -lEGL -lGLESv2 -lglapi -ldrm_nouveau -lpng -ljpeg `sdl2-config --libs` `freetype-config --libs`
+LIBS	:=  -lnx -lfreetype -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lSDL2 -lEGL -lGLESv2 -lglapi -ldrm_nouveau -lpng -ljpeg `sdl2-config --libs` `freetype-config --libs`
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
