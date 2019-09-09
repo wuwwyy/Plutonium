@@ -72,7 +72,7 @@ namespace pu::ui::elm
         return this->hasicon;
     }
 
-    Menu::Menu(s32 X, s32 Y, s32 Width, Color OptionColor, s32 ItemSize, s32 ItemsToShow) : Element::Element()
+    Menu::Menu(s32 X, s32 Y, s32 Width, Color OptionColor, s32 ItemSize, s32 ItemsToShow, s32 fontSize) : Element::Element()
     {
         this->x = X;
         this->y = Y;
@@ -91,7 +91,7 @@ namespace pu::ui::elm
         this->dtouch = false;
         this->fcs = { 40, 40, 40, 255 };
         this->basestatus = 0;
-        this->font = render::LoadDefaultFont(25);
+        this->font = render::LoadDefaultFont(fontSize);
     }
 
     s32 Menu::GetX()
@@ -286,21 +286,11 @@ namespace pu::ui::elm
                 s32 ty = ((ch - xh) / 2) + cy;
                 if(itm->HasIcon())
                 {
-                    float factor = (float)render::GetTextureHeight(curicon)/(float)render::GetTextureWidth(curicon);
-                    s32 icw = (this->isize - 10);
-                    s32 ich = icw;
-                    s32 icx = (cx + 25);
+                    s32 ich = (this->isize - 10);
+                    s32 icw = ((ich * 16) / 9);
+                    s32 icx = (cx + 10);
                     s32 icy = (cy + 5);
                     tx = (icx + icw + 25);
-                    if(factor < 1)
-                    {
-                        ich = ich*factor;
-                        icy = icy+((this->isize-ich)/2);
-                    } else
-                    {
-                        icw = icw/factor;
-                        icx = icx+((this->isize-icw)/2);
-                    }
                     Drawer->RenderTextureScaled(curicon, icx, icy, icw, ich);
                 }
                 Drawer->RenderTexture(curname, tx, ty);
@@ -333,6 +323,7 @@ namespace pu::ui::elm
 
     void Menu::OnInput(u64 Down, u64 Up, u64 Held, bool Touch)
     {
+        if(GetItems().size() == 0) return;
         if(basestatus == 1)
         {
             auto curtime = std::chrono::steady_clock::now();
