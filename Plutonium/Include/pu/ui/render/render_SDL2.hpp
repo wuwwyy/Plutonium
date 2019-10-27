@@ -13,12 +13,12 @@
 
 #pragma once
 #include <string>
-#include <switch.h>
+#include <pu/cross.h>
 #include <pu/pu_String.hpp>
 #include <pu/ui/ui_Types.hpp>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include <pu/ui/render/SDL_ttf.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_mixer.h>
 

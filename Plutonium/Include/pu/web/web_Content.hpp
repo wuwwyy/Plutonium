@@ -12,7 +12,7 @@
 */
 
 #pragma once
-#include <switch.h>
+#include <pu/cross.h>
 #include <string>
 #include <vector>
 #include <functional>

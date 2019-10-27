@@ -1,13 +1,20 @@
 #include <MainApplication.hpp>
 
 // Implement all the layout/application functions here
-
+using namespace pu::ui::elm;
 CustomLayout::CustomLayout() : Layout::Layout()
 {
     // Create the TextBlock instance with the text we want
-    this->helloText = pu::ui::elm::TextBlock::New(300, 300, "Press X to answer my question.");
-    
+    this->helloText = TextBlock::New(300, 300, "Drücke \ue0e2 um zu zweifeln.");
+    this->menu = Menu::New(0,0,1280,pu::ui::Color(255,0,0,0),80,9);
     // Add the instance to the layout. IMPORTANT! this MUST be done for them to be used, having them as members is not enough (just a simple way to keep them)
+    MenuItem::Ref itm = MenuItem::New("hallo welt");
+    this->menu->AddItem(itm);
+    this->menu->AddItem(itm);
+    this->menu->AddItem(itm);
+    MenuItem::Ref itm2 = MenuItem::New("hallo \ue0e2");
+    this->menu->AddItem(itm2);
+    this->Add(this->menu);
     this->Add(this->helloText);
 }
 

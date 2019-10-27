@@ -40,5 +40,7 @@
 #include <pu/ui/render/render_Renderer.hpp>
 #include <pu/ui/render/render_SDL2.hpp>
 
+#ifdef __SWITCH__
 #include <pu/web/web_Content.hpp>
 #include <pu/web/web_Display.hpp>
+#endif

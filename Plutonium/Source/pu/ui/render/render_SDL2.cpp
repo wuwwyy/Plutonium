@@ -20,7 +20,7 @@ namespace pu::ui::render
 
     NativeTexture RenderText(NativeFont Font, String Text, Color Color)
     {
-        NativeSurface txsrf = TTF_RenderUNICODE_Blended_Wrapped(Font, (const u16*)Text.AsUTF16().c_str(), { Color.R, Color.G, Color.B, Color.A }, 1280);
+        NativeSurface txsrf = TTF_RenderUNICODE_Blended_Wrapped(Font, LoadSharedFont(SharedFont::NintendoExtended, 25), (const u16*)Text.AsUTF16().c_str(), { Color.R, Color.G, Color.B, Color.A }, 1280);
         SDL_SetSurfaceAlphaMod(txsrf, 255);
         return ConvertToTexture(txsrf);
     }
@@ -32,12 +32,13 @@ namespace pu::ui::render
 
     NativeFont LoadSharedFont(SharedFont Type, s32 Size)
     {
+#ifdef __SWITCH__
         auto it = shfonts.find(Size);
         if((it != shfonts.end()) && (it->second.first == Type)) return it->second.second;
         PlFontData plfont;
         NativeFont font = NULL;
         SDL_RWops *mem = NULL;
-        Result rc = plGetSharedFontByType(&plfont, static_cast<s32>(Type));
+        Result rc = plGetSharedFontByType(&plfont, static_cast<PlSharedFontType>(Type));
         if(rc == 0)
         {
             mem = SDL_RWFromMem(plfont.address, plfont.size);
@@ -45,6 +46,12 @@ namespace pu::ui::render
         }
         if(font != NULL) shfonts.insert(std::make_pair(Size, std::make_pair(Type, font)));
         return font;
+#else
+        if (Type == SharedFont::NintendoExtended)
+            return TTF_OpenFont("/home/behemoth/nx/Uranium/fonts/FontNintendoExtended.ttf", Size);
+        else
+            return TTF_OpenFont("/home/behemoth/nx/Uranium/fonts/FontStandard.ttf", Size);
+#endif
     }
 
     NativeFont LoadFont(std::string Path, s32 Size)

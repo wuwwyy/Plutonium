@@ -26,15 +26,19 @@ namespace pu::ui::render
             this->okromfs = false;
             if(this->initopts.InitRomFs)
             {
+#ifdef __SWITCH__
                 Result rc = romfsInit();
                 this->okromfs = R_SUCCEEDED(rc);
+#endif
             }
 
             this->okpl = false;
             if(this->initopts.InitPL)
             {
+#ifdef __SWITCH__
                 Result rc = plInitialize();
                 this->okpl = R_SUCCEEDED(rc);
+#endif
             }
 
             SDL_Init(this->sdlflags);
@@ -77,8 +81,10 @@ namespace pu::ui::render
             if(this->initopts.InitTTF) TTF_Quit();
             if(this->initopts.InitIMG) IMG_Quit();
             if(this->initopts.InitMixer) Mix_CloseAudio();
+#ifdef __SWITCH__
             if(this->okpl) plExit();
             if(this->okromfs) romfsExit();
+#endif
             SDL_DestroyRenderer(purend);
             SDL_FreeSurface(this->rendsf);
             SDL_DestroyWindow(this->rendwd);

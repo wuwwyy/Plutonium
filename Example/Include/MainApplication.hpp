@@ -19,6 +19,7 @@ class CustomLayout : public pu::ui::Layout
         // An easy way to keep objects is to have them as private members
         // Using ::Ref (of a Plutonium built-in object or any class having PU_SMART_CTOR) is an alias to a shared_ptr of the instance.
         pu::ui::elm::TextBlock::Ref helloText;
+        pu::ui::elm::Menu::Ref menu;
 };
 
 // Define your application (can't instantiate base class, so need to make a derived one)

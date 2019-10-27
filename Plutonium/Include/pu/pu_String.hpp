@@ -13,7 +13,7 @@
 
 #pragma once
 #include <string>
-#include <switch.h>
+#include <pu/cross.h>
 #include <pu/pu_Macros.hpp>
 
 namespace pu
