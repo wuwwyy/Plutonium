@@ -9,3 +9,7 @@ Testris/
 *.nro
 *.pfs0
 *.nacp
+Output-switch/
+Output-pc/
+Build-switch/
+Build-pc/

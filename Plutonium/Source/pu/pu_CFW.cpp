@@ -5,11 +5,12 @@ namespace pu
     bool IsAtmosphere()
     {
 #ifdef __SWITCH__
-        if(splInitialize() != 0) return false;
-        u64 tmpc = 0;
-        bool isatmos = R_SUCCEEDED(splGetConfig((SplConfigItem)65000, &tmpc));
-        splExit();
-        return isatmos;
+        SecmonArgs args;
+        args.X[0] = 0xF0000404;
+        args.X[1] = 0;
+        args.X[2] = (u64)nullptr;
+        svcCallSecureMonitor(&args);
+        return true;
 #endif
     }
 
