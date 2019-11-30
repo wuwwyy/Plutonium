@@ -323,7 +323,7 @@ namespace pu::ui::elm
                 s32 fcy = scy + (this->fisel * (sch / this->itms.size()));
                 Drawer->RenderRectangleFill(sclr, scx, fcy, scw, fch);
             }
-            Drawer->RenderShadowSimple(cx, cy, cw, 5, 160);
+            //Drawer->RenderShadowSimple(cx, cy, cw, 5, 160);
         }
     }
 
