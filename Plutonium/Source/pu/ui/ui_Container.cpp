@@ -11,6 +11,11 @@ namespace pu::ui
         this->h = Height;
     }
 
+    void Container::Add(std::shared_ptr<elm::Element> Elm)
+    {
+        elms.push_back(std::dynamic_pointer_cast<elm::Element>(Elm));
+    }
+
     elm::Element::Ref &Container::At(s32 Index)
     {
         return this->elms.at(Index);

@@ -7,17 +7,29 @@ namespace pu::ui
         this->rend = Renderer;
         this->rend->Initialize();
         this->show = false;
-        this->cbipt = [&](u64,u64,u64,Touch){};
         this->rover = false;
         this->ovl = nullptr;
         this->closefact = false;
         this->fovl = false;
         this->ffovl = false;
-        this->lyt = nullptr;
         this->loaded = false;
         this->rof = [](render::Renderer::Ref&) -> bool { return true; };
         this->fadea = 255;
         this->aapf = 35;
+    }
+
+    void Application::LoadLayout(Layout::Ref layout)
+    {
+        this->layoutStack.emplace(layout);
+    }
+
+    void Application::PopLayout()
+    {
+        if (this->layoutStack.size() > 1)
+        {
+            if (this->layoutStack.top()->OnClose())
+                this->layoutStack.pop();
+        }
     }
 
     void Application::Prepare()
@@ -27,16 +39,6 @@ namespace pu::ui
             this->OnLoad();
             this->loaded = true;
         }
-    }
-
-    void Application::AddThread(std::function<void()> Callback)
-    {
-        this->thds.push_back(Callback);
-    }
-
-    void Application::SetOnInput(std::function<void(u64 Down, u64 Up, u64 Held, Touch Pos)> Callback)
-    {
-        this->cbipt = Callback;
     }
 
     s32 Application::ShowDialog(Dialog::Ref &ToShow)
@@ -59,6 +61,21 @@ namespace pu::ui
         return opt;
     }
 
+    void Application::StartOverlay(std::shared_ptr<ui::Overlay> overlay)
+    {
+        if(this->ovl == nullptr) this->ovl = overlay;
+    }
+
+    void Application::StartOverlayWithTimeout(std::shared_ptr<ui::Overlay> overlay, u64 Milli)
+    {
+        if(this->ovl == nullptr)
+        {
+            this->ovl = overlay;
+            this->tmillis = Milli;
+            this->tclock = std::chrono::steady_clock::now();
+        }
+    }
+
     void Application::EndOverlay()
     {
         if(this->ovl != nullptr)
@@ -74,7 +91,7 @@ namespace pu::ui
     void Application::Show()
     {
         if(!this->loaded) return;
-        if(this->lyt == nullptr) return;
+        if(this->layoutStack.size() == 0) return;
         this->show = true;
         while(this->show) this->CallForRender();
     }
@@ -93,9 +110,9 @@ namespace pu::ui
     bool Application::CallForRender()
     {
         if(!this->loaded) return false;
-        if(this->lyt == nullptr) return false;
+        if(this->layoutStack.size() == 0) return false;
         bool c = true;
-        this->rend->InitializeRender(this->lyt->GetBackgroundColor());
+        this->rend->InitializeRender(this->layoutStack.top()->GetBackgroundColor());
         this->OnRender();
         if(this->rover)
         {
@@ -171,18 +188,15 @@ namespace pu::ui
             tch.X = nxtch.px;
             tch.Y = nxtch.py;
         }
-        auto simtch = this->lyt->GetSimulatedTouch();
+        auto simtch = this->layoutStack.top()->GetSimulatedTouch();
         if(!simtch.IsEmpty()) tch = simtch;
-        if(!this->thds.empty()) for(s32 i = 0; i < this->thds.size(); i++) (this->thds[i])();
-        this->lyt->PreRender();
-        auto lyth = this->lyt->GetAllThreads();
-        if(!lyth.empty()) for(s32 i = 0; i < lyth.size(); i++) (lyth[i])();
-        if(!this->rover) (this->cbipt)(d, u, h, tch);
-        if(this->lyt->HasBackgroundImage()) this->rend->RenderTexture(this->lyt->GetBackgroundImageTexture(), 0, 0);
-        if(!this->rover) (this->lyt->GetOnInput())(d, u, h, tch);
-        if(this->lyt->HasChilds()) for(s32 i = 0; i < this->lyt->GetCount(); i++)
+        this->layoutStack.top()->PreRender();
+        this->layoutStack.top()->OnTick();
+        if(this->layoutStack.top()->HasBackgroundImage()) this->rend->RenderTexture(this->layoutStack.top()->GetBackgroundImageTexture(), 0, 0);
+        if(!this->rover) this->layoutStack.top()->OnInput(d, u, h, tch);
+        if(this->layoutStack.top()->HasChilds()) for(s32 i = 0; i < this->layoutStack.top()->GetCount(); i++)
         {
-            auto elm = this->lyt->At(i);
+            auto elm = this->layoutStack.top()->At(i);
             if(elm->IsVisible())
             {
                 elm->OnRender(this->rend, elm->GetProcessedX(), elm->GetProcessedY());
