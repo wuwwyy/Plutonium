@@ -277,7 +277,7 @@ namespace pu::ui::elm
                 }
                 else Drawer->RenderRectangleFill(this->clr, cx, cy, cw, ch);
                 auto itm = this->itms[i];
-                s32 xh = render::GetTextHeight(this->font, itm->GetName());
+                s32 xh = render::GetTextureHeight(curname);
                 s32 tx = (cx + 25);
                 s32 ty = ((ch - xh) / 2) + cy;
                 if(itm->HasIcon())
@@ -503,7 +503,7 @@ namespace pu::ui::elm
         for(s32 i = this->fisel; i < (its + this->fisel); i++)
         {
             auto strname = this->itms[i]->GetName();
-            auto tex = render::RenderText(this->font, strname, this->itms[i]->GetColor());
+            auto tex = render::RenderText(this->font, strname, this->itms[i]->GetColor(), this->GetWidth());
             this->loadednames.push_back(tex);
             if(this->itms[i]->HasIcon())
             {

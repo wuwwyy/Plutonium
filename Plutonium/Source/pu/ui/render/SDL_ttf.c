@@ -1729,7 +1729,7 @@ SDL_Surface *TTF_RenderUNICODE_Blended(TTF_Font *font,
 }
 
 
-SDL_Surface *TTF_RenderText_Blended_Wrapped(TTF_Font *font, TTF_Font *meme, const char *text, SDL_Color fg, Uint32 wrapLength)
+SDL_Surface *TTF_RenderText_Blended_Wrapped(TTF_Font *font, TTF_Font *meme, const char *text, SDL_Color fg, Uint32 wrapLength, Uint32 lineSpacing)
 {
     SDL_Surface *surface = NULL;
     Uint8 *utf8;
@@ -1739,7 +1739,7 @@ SDL_Surface *TTF_RenderText_Blended_Wrapped(TTF_Font *font, TTF_Font *meme, cons
     utf8 = SDL_stack_alloc(Uint8, LATIN1_to_UTF8_len(text));
     if (utf8) {
         LATIN1_to_UTF8(text, utf8);
-        surface = TTF_RenderUTF8_Blended_Wrapped(font, meme, (char *)utf8, fg, wrapLength);
+        surface = TTF_RenderUTF8_Blended_Wrapped(font, meme, (char *)utf8, fg, wrapLength, lineSpacing);
         SDL_stack_free(utf8);
     } else {
         SDL_OutOfMemory();
@@ -1759,7 +1759,7 @@ static SDL_bool CharacterIsDelimiter(char c, const char *delimiters)
 }
 
 SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
-                                    const char *text, SDL_Color fg, Uint32 wrapLength)
+                                    const char *text, SDL_Color fg, Uint32 wrapLength, Uint32 lineSpacing)
 {
     unsigned int i;
     int xstart, ystart;
@@ -1868,7 +1868,7 @@ SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
         } while (tok < end);
     }
 
-    lineskip = TTF_FontLineSkip(font);
+    lineskip = TTF_FontLineSkip(font) + lineSpacing;
     rowHeight = SDL_max(height, lineskip);
 
     width = (numLines > 1) ? wrapLength : width;
@@ -2005,7 +2005,7 @@ SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
 }
 
 SDL_Surface *TTF_RenderUNICODE_Blended_Wrapped(TTF_Font *font, TTF_Font *meme, const Uint16* text,
-                                               SDL_Color fg, Uint32 wrapLength)
+                                               SDL_Color fg, Uint32 wrapLength, Uint32 lineSpacing)
 {
     SDL_Surface *surface = NULL;
     Uint8 *utf8;
@@ -2015,7 +2015,7 @@ SDL_Surface *TTF_RenderUNICODE_Blended_Wrapped(TTF_Font *font, TTF_Font *meme, c
     utf8 = SDL_stack_alloc(Uint8, UCS2_to_UTF8_len(text));
     if (utf8) {
         UCS2_to_UTF8(text, utf8);
-        surface = TTF_RenderUTF8_Blended_Wrapped(font, meme, (char *)utf8, fg, wrapLength);
+        surface = TTF_RenderUTF8_Blended_Wrapped(font, meme, (char *)utf8, fg, wrapLength, lineSpacing);
         SDL_stack_free(utf8);
     } else {
         SDL_OutOfMemory();

@@ -54,12 +54,12 @@ namespace pu::ui::elm
 
     s32 TextBlock::GetTextWidth()
     {
-        return render::GetTextWidth(this->fnt, this->text);
+        return render::GetTextureWidth(ntex);
     }
 
     s32 TextBlock::GetTextHeight()
     {
-        return render::GetTextHeight(this->fnt, this->text);
+        return render::GetTextureHeight(ntex);
     }
 
     String TextBlock::GetText()

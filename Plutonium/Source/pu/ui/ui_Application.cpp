@@ -25,10 +25,16 @@ namespace pu::ui
 
     void Application::PopLayout()
     {
-        if (this->layoutStack.size() > 1)
+        if (this->layoutStack.top()->OnClose())
         {
-            if (this->layoutStack.top()->OnClose())
+            if (this->layoutStack.size() > 1)
+            {
                 this->layoutStack.pop();
+            }
+            else
+            {
+                this->Close();
+            }
         }
     }
 
@@ -46,9 +52,9 @@ namespace pu::ui
         return ToShow->Show(this->rend, this);
     }
 
-    int Application::CreateShowDialog(String Title, String Content, std::vector<String> Options, bool UseLastOptionAsCancel, std::string Icon)
+    int Application::CreateShowDialog(String Title, String Content, std::vector<String> Options, bool UseLastOptionAsCancel, u32 maxWidth, std::string Icon)
     {
-        Dialog dlg(Title, Content);
+        Dialog dlg(Title, Content, maxWidth);
         for(s32 i = 0; i < Options.size(); i++)
         {
             if(UseLastOptionAsCancel && (i == Options.size() - 1)) dlg.SetCancelOption(Options[i]);
@@ -175,6 +181,7 @@ namespace pu::ui
 
     void Application::OnRender()
     {
+        if(this->layoutStack.size() == 0) return;
         hidScanInput();
         u64 d = hidKeysDown(CONTROLLER_P1_AUTO);
         u64 u = hidKeysUp(CONTROLLER_P1_AUTO);

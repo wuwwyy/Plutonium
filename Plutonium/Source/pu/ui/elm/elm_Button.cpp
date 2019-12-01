@@ -136,8 +136,8 @@ namespace pu::ui::elm
             }
             else Drawer->RenderRectangleFill(this->clr, rdx, rdy, this->w, this->h);
         }
-        s32 xw = render::GetTextWidth(this->fnt, this->cnt);
-        s32 xh = render::GetTextHeight(this->fnt, this->cnt);
+        s32 xw = render::GetTextureWidth(this->ntex);
+        s32 xh = render::GetTextureHeight(this->ntex);
         s32 tx = ((this->w - xw) / 2) + rdx;
         s32 ty = ((this->h - xh) / 2) + rdy;
         Drawer->RenderTexture(this->ntex, tx, ty);

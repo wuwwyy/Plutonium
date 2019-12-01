@@ -18,9 +18,9 @@ namespace pu::ui::render
         return tex;
     }
 
-    NativeTexture RenderText(NativeFont Font, String Text, Color Color)
+    NativeTexture RenderText(NativeFont Font, String Text, Color Color, u32 WrapLength, u32 LineSpacing)
     {
-        NativeSurface txsrf = TTF_RenderUNICODE_Blended_Wrapped(Font, LoadSharedFont(SharedFont::NintendoExtended, 25), (const u16*)Text.AsUTF16().c_str(), { Color.R, Color.G, Color.B, Color.A }, 1280);
+        NativeSurface txsrf = TTF_RenderUNICODE_Blended_Wrapped(Font, LoadSharedFont(SharedFont::NintendoExtended, 25), (const u16*)Text.AsUTF16().c_str(), { Color.R, Color.G, Color.B, Color.A }, WrapLength, LineSpacing);
         SDL_SetSurfaceAlphaMod(txsrf, 255);
         return ConvertToTexture(txsrf);
     }
@@ -91,42 +91,6 @@ namespace pu::ui::render
         int h = 0;
         SDL_QueryTexture(Texture, NULL, NULL, NULL, &h);
         return (s32)h;
-    }
-
-    #define PROCESS_TMP_STR { \
-        int tmpw = 0; \
-        TTF_SizeUNICODE(Font, (const u16*)tmpstr.c_str(), &tmpw, NULL); \
-        if(tmpw > tw) tw = tmpw; \
-        int tmph = 0; \
-        TTF_SizeUNICODE(Font, (const u16*)tmpstr.c_str(), NULL, &tmph); \
-        th += tmph; \
-        tmpstr = u""; \
-    }
-
-    #define TEXT_SIZE_BASE std::u16string tmpstr; \
-        int tw = 0; \
-        int th = 0; \
-        for(auto &ch: Text.AsUTF16()) \
-        { \
-            if(ch == u'\n') \
-            PROCESS_TMP_STR \
-            else tmpstr += ch; \
-        } \
-        if(!tmpstr.empty()) \
-        PROCESS_TMP_STR
-
-    s32 GetTextWidth(NativeFont Font, String Text)
-    {
-        TEXT_SIZE_BASE
-
-        return (s32)tw;
-    }
-
-    s32 GetTextHeight(NativeFont Font, String Text)
-    {
-        TEXT_SIZE_BASE
-
-        return (s32)th;
     }
 
     void SetAlphaValue(NativeTexture Texture, u8 Alpha)

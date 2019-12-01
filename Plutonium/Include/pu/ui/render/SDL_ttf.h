@@ -236,11 +236,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Blended(TTF_Font *font,
    This function returns the new surface, or NULL if there was an error.
 */
 extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
-                const char *text, SDL_Color fg, Uint32 wrapLength);
+                const char *text, SDL_Color fg, Uint32 wrapLength, Uint32 lineSpacing);
 extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
-                const char *text, SDL_Color fg, Uint32 wrapLength);
+                const char *text, SDL_Color fg, Uint32 wrapLength, Uint32 lineSpacing);
 extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
-                const Uint16 *text, SDL_Color fg, Uint32 wrapLength);
+                const Uint16 *text, SDL_Color fg, Uint32 wrapLength, Uint32 lineSpacing);
 
 /* Create a 32-bit ARGB surface and render the given glyph at high quality,
    using alpha blending to dither the font with the given color.

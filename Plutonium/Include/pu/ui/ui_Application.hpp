@@ -36,7 +36,7 @@ namespace pu::ui
             virtual void OnLoad() = 0;
 
             s32 ShowDialog(Dialog::Ref &ToShow);
-            int CreateShowDialog(String Title, String Content, std::vector<String> Options, bool UseLastOptionAsCancel, std::string Icon = "");
+            int CreateShowDialog(String Title, String Content, std::vector<String> Options, bool UseLastOptionAsCancel, u32 maxWidth = 1280, std::string Icon = "");
 
             void StartOverlay(std::shared_ptr<ui::Overlay> overlay);
             void StartOverlayWithTimeout(std::shared_ptr<ui::Overlay> overlay, u64 Milli);

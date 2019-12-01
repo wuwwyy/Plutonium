@@ -21,7 +21,7 @@ namespace pu::ui
     class Dialog
     {
         public:
-            Dialog(String Title, String Content);
+            Dialog(String Title, String Content, u32 maxWidth = 1280);
             PU_SMART_CTOR(Dialog)
             ~Dialog();
 
@@ -37,19 +37,19 @@ namespace pu::ui
         private:
             bool hcancel;
             String scancel;
-            render::NativeFont tfont;
-            render::NativeFont cfont;
-            render::NativeFont ofont;
-            String stitle;
-            String scnt;
-            render::NativeTexture title;
-            render::NativeTexture cnt;
-            std::vector<String> sopts;
-            std::vector<render::NativeTexture> opts;
-            s32 osel;
+            render::NativeFont titleFont;
+            render::NativeFont contentFont;
+            render::NativeFont optionFont;
+            String title;
+            String content;
+            render::NativeTexture titleTexture;
+            render::NativeTexture contentTexture;
+            std::vector<String> options;
+            std::vector<render::NativeTexture> optionTextures;
+            s32 selectedOption;
             bool cancel;
-            bool hicon;
-            render::NativeTexture icon;
+            bool hasIcon;
+            render::NativeTexture iconTexture;
             s32 prevosel;
             s32 pselfact;
             s32 selfact;

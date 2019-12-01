@@ -102,8 +102,8 @@ namespace pu::ui::elm
 
     void Toggle::OnRender(render::Renderer::Ref &Drawer, s32 X, s32 Y)
     {
-        s32 tw = render::GetTextWidth(this->fnt, this->cnt);
-        s32 th = render::GetTextHeight(this->fnt, this->cnt);
+        s32 tw = render::GetTextureWidth(this->ntex);
+        s32 th = render::GetTextureHeight(this->ntex);
         s32 rw = th;
         s32 rh = (2 * th);
         s32 rx = X;
