@@ -11,7 +11,8 @@ class CustomLayout : public pu::ui::Layout
 
         CustomLayout();
         void OnInput(u64 Down, u64 Up, u64 Held, pu::ui::Touch Pos) override;
-        bool OnClose() override;
+        void OnStart() override;
+        bool OnStop() override;
         void OnTick() override;
 
         // Have ::Ref alias and ::New() static constructor
@@ -31,7 +32,8 @@ class BLayout : public pu::ui::Layout
 
         BLayout();
         void OnInput(u64 Down, u64 Up, u64 Held, pu::ui::Touch Pos) override;
-        bool OnClose() override;
+        void OnStart() override;
+        bool OnStop() override;
         void OnTick() override;
 
         // Have ::Ref alias and ::New() static constructor

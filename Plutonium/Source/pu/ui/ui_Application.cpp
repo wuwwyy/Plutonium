@@ -21,11 +21,13 @@ namespace pu::ui
     void Application::LoadLayout(Layout::Ref layout)
     {
         this->layoutStack.emplace(layout);
+        this->CallForRender();
+        this->layoutStack.top()->OnStart();
     }
 
     void Application::PopLayout()
     {
-        if (this->layoutStack.top()->OnClose())
+        if (this->layoutStack.top()->OnStop())
         {
             if (this->layoutStack.size() > 1)
             {

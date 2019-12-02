@@ -26,7 +26,8 @@ namespace pu::ui
 
             bool HasChilds();
             virtual void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos) = 0;
-            virtual bool OnClose() = 0;
+            virtual void OnStart() = 0;
+            virtual bool OnStop() = 0;
             virtual void OnTick() = 0;
             void SetBackgroundImage(std::string Path);
             void SetBackgroundColor(Color Color);

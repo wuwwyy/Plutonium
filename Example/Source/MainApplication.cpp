@@ -35,7 +35,9 @@ void CustomLayout::OnInput(u64 Down, u64 Up, u64 Held, pu::ui::Touch Pos)
     }
 }
 
-bool CustomLayout::OnClose() {
+void CustomLayout::OnStart() {}
+
+bool CustomLayout::OnStop() {
     return (mainApp->CreateShowDialog("Close?", "Do you really want to close the application?", { "Yes", "No" }, true) == 0);
 }
 
@@ -59,7 +61,9 @@ void BLayout::OnInput(u64 Down, u64 Up, u64 Held, pu::ui::Touch Pos)
     }
 }
 
-bool BLayout::OnClose() {
+void BLayout::OnStart() {}
+
+bool BLayout::OnStop() {
     return true;
 }
 
