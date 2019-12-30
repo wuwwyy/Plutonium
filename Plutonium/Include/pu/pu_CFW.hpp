@@ -12,7 +12,6 @@
 */
 
 #pragma once
-#include <pu/cross.h>
 
 namespace pu
 {

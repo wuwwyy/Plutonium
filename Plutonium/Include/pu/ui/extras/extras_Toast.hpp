@@ -20,10 +20,10 @@ namespace pu::ui::extras
     class Toast final : public Overlay
     {
         public:
-            Toast(String Text, s32 FontSize, Color TextColor, Color BaseColor);
+            Toast(const std::string& Text, s32 FontSize, Color TextColor, Color BaseColor);
             PU_SMART_CTOR(Toast)
 
-            void SetText(String Text);
+            void SetText(const std::string& Text);
             void OnPreRender(render::Renderer::Ref &Drawer);
             void OnPostRender(render::Renderer::Ref &Drawer);
         private:

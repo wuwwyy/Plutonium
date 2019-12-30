@@ -13,8 +13,7 @@
 
 #pragma once
 #include <string>
-#include <pu/cross.h>
-#include <pu/pu_String.hpp>
+#include <vector>
 #include <pu/ui/ui_Types.hpp>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -41,17 +40,18 @@ namespace pu::ui::render
     };
 
     NativeTexture ConvertToTexture(NativeSurface Surface);
-    NativeTexture RenderText(NativeFont Font, String Text, Color Color);
-    NativeTexture LoadImage(std::string Path);
+    NativeTexture RenderText(NativeFont Font, const std::string& Text, Color Color);
+    NativeTexture LoadImage(const std::string& Path);
+    NativeTexture LoadImage(const std::vector<u8>& Image);
     NativeFont LoadSharedFont(SharedFont Type, s32 Size);
-    NativeFont LoadFont(std::string Path, s32 Size);
-    void SetDefaultFont(std::string Path);
+    NativeFont LoadFont(const std::string& Path, s32 Size);
+    void SetDefaultFont(const std::string& Path);
     void SetDefaultFontFromShared(SharedFont Type);
     NativeFont LoadDefaultFont(s32 Size);
     s32 GetTextureWidth(NativeTexture Texture);
     s32 GetTextureHeight(NativeTexture Texture);
-    s32 GetTextWidth(NativeFont Font, String Text);
-    s32 GetTextHeight(NativeFont Font, String Text);
+    s32 GetTextWidth(NativeFont Font, const std::string& Text);
+    s32 GetTextHeight(NativeFont Font, const std::string& Text);
     void SetAlphaValue(NativeTexture Texture, u8 Alpha);
     void DeleteFont(NativeFont Font);
     void DeleteTexture(NativeTexture Texture);

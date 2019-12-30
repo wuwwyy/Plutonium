@@ -18,7 +18,7 @@ namespace pu::ui
         this->A = A;
     }
 
-    Color Color::FromHex(std::string HexFmt)
+    Color Color::FromHex(const std::string& HexFmt)
     {
         Color clr;
         std::string r = "00";

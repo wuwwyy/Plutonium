@@ -4,13 +4,12 @@
 
 namespace pu::ui
 {
-    Dialog::Dialog(String Title, String Content)
+    Dialog::Dialog(const std::string& Title, const std::string& Content)
+        : stitle(Title), scnt(Content)
     {
         this->tfont = render::LoadDefaultFont(30);
         this->cfont = render::LoadDefaultFont(20);
         this->ofont = render::LoadDefaultFont(18);
-        this->stitle = Title;
-        this->scnt = Content;
         this->title = render::RenderText(this->tfont, Title, { 10, 10, 10, 255 });
         this->cnt = render::RenderText(this->cfont, Content, { 20, 20, 20, 255 });
         this->osel = 0;
@@ -43,13 +42,13 @@ namespace pu::ui
         for(auto &opt: this->opts) render::DeleteTexture(opt);
     }
 
-    void Dialog::AddOption(String Name)
+    void Dialog::AddOption(const std::string& Name)
     {
         this->opts.push_back(render::RenderText(this->ofont, Name, { 10, 10, 10, 255 }));
         this->sopts.push_back(Name);
     }
 
-    void Dialog::SetCancelOption(String Name)
+    void Dialog::SetCancelOption(const std::string& Name)
     {
         this->hcancel = true;
         this->scancel = Name;
@@ -66,7 +65,7 @@ namespace pu::ui
         return this->hcancel;
     }
 
-    void Dialog::SetIcon(std::string Icon)
+    void Dialog::SetIcon(const std::string& Icon)
     {
         if(this->hicon) render::DeleteTexture(this->icon);
         this->icon = render::LoadImage(Icon);
@@ -167,7 +166,7 @@ namespace pu::ui
                     hidTouchRead(&tch, 0);
                     for(s32 i = 0; i < this->opts.size(); i++)
                     {
-                        String txt = this->sopts[i];
+                        const std::string txt = this->sopts[i];
                         s32 rx = elx + ((elemw + 20) * i);
                         s32 ry = ely;
                         if(((rx + elemw) > tch.px) && (tch.px > rx) && ((ry + elemh) > tch.py) && (tch.py > ry))
@@ -201,7 +200,7 @@ namespace pu::ui
                 }
                 for(s32 i = 0; i < this->opts.size(); i++)
                 {
-                    String txt = this->sopts[i];
+                    const std::string txt = this->sopts[i];
                     s32 tw = render::GetTextWidth(this->ofont, txt);
                     s32 th = render::GetTextHeight(this->ofont, txt);
                     s32 tx = elx + ((elemw - tw) / 2) + ((elemw + 20) * i);

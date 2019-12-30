@@ -19,7 +19,7 @@ namespace pu::ui::elm
     class Image : public Element
     {
         public:
-            Image(s32 X, s32 Y, String Image);
+            Image(s32 X, s32 Y, const std::string& Image);
             PU_SMART_CTOR(Image)
             ~Image();
 
@@ -33,13 +33,12 @@ namespace pu::ui::elm
             void SetHeight(s32 Height);
             float GetRotation();
             void SetRotation(float Angle);
-            String GetImage();
-            void SetImage(String Image);
+            void SetImage(const std::string& Image);
+            void SetImage(const std::vector<u8>& RawImage);
             bool IsImageValid();
             void OnRender(render::Renderer::Ref &Drawer, s32 X, s32 Y);
             void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos);
         private:
-            String img;
             render::NativeTexture ntex;
             render::NativeTextureRenderOptions rendopts;
             s32 x;

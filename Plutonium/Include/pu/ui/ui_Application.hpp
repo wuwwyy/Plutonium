@@ -27,13 +27,7 @@ namespace pu::ui
             Application(render::Renderer::Ref Renderer);
             PU_SMART_CTOR(Application)
 
-            template<typename Lyt>
-            void LoadLayout(std::shared_ptr<Lyt> Layout)
-            {
-                static_assert(std::is_base_of<ui::Layout, Lyt>::value, "Layouts must inherit from pu::ui::Layout!");
-
-                this->lyt = std::dynamic_pointer_cast<ui::Layout>(Layout);
-            }
+            void LoadLayout(std::shared_ptr<Layout> Layout);
 
             void Prepare();
             // Force create a derived Application which should initialize everything here
@@ -42,28 +36,10 @@ namespace pu::ui
             void AddThread(std::function<void()> Callback);
             void SetOnInput(std::function<void(u64 Down, u64 Up, u64 Held, Touch Pos)> Callback);
             s32 ShowDialog(Dialog::Ref &ToShow);
-            int CreateShowDialog(String Title, String Content, std::vector<String> Options, bool UseLastOptionAsCancel, std::string Icon = "");
-            
-            template<typename Ovl>
-            void StartOverlay(std::shared_ptr<Ovl> Overlay)
-            {
-                static_assert(std::is_base_of<ui::Overlay, Ovl>::value, "Overlays must inherit from pu::ui::Overlay!");
+            int CreateShowDialog(const std::string& Title, const std::string& Content, std::vector<std::string> Options, bool UseLastOptionAsCancel, const std::string& Icon = "");
 
-                if(this->ovl == nullptr) this->ovl = std::dynamic_pointer_cast<ui::Overlay>(Overlay);
-            }
-
-            template<typename Ovl>
-            void StartOverlayWithTimeout(std::shared_ptr<Ovl> Overlay, u64 Milli)
-            {
-                static_assert(std::is_base_of<ui::Overlay, Ovl>::value, "Overlays must inherit from pu::ui::Overlay!");
-
-                if(this->ovl == nullptr)
-                {
-                    this->ovl = std::dynamic_pointer_cast<ui::Overlay>(Overlay);
-                    this->tmillis = Milli;
-                    this->tclock = std::chrono::steady_clock::now();
-                }
-            }
+            void StartOverlay(std::shared_ptr<Overlay> Overlay);
+            void StartOverlayWithTimeout(std::shared_ptr<Overlay> Overlay, u64 Milli);
 
             void EndOverlay();
             void Show();

@@ -2,7 +2,7 @@
 
 namespace pu::ui::elm
 {
-    Toggle::Toggle(s32 X, s32 Y, String Content, u64 Key, Color Color) : Element::Element()
+    Toggle::Toggle(s32 X, s32 Y, const std::string& Content, u64 Key, Color Color) : Element::Element()
     {
         this->x = X;
         this->y = Y;
@@ -55,12 +55,12 @@ namespace pu::ui::elm
         return 0;
     }
 
-    String Toggle::GetContent()
+    std::string Toggle::GetContent()
     {
         return this->cnt;
     }
 
-    void Toggle::SetContent(String Content)
+    void Toggle::SetContent(const std::string& Content)
     {
         this->cnt = Content;
         render::DeleteTexture(this->ntex);

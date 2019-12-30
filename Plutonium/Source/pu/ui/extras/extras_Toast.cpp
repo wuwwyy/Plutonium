@@ -2,7 +2,7 @@
 
 namespace pu::ui::extras
 {
-    Toast::Toast(String Text, s32 FontSize, Color TextColor, Color BaseColor) : Overlay(0, 550, 0, 0, BaseColor)
+    Toast::Toast(const std::string& Text, s32 FontSize, Color TextColor, Color BaseColor) : Overlay(0, 550, 0, 0, BaseColor)
     {
         this->text = elm::TextBlock::New(0, 0, Text, FontSize);
         this->text->SetColor(TextColor);
@@ -18,7 +18,7 @@ namespace pu::ui::extras
         this->Add(this->text);
     }
 
-    void Toast::SetText(String Text)
+    void Toast::SetText(const std::string& Text)
     {
         this->text->SetText(Text);
         s32 textw = this->text->GetTextWidth();

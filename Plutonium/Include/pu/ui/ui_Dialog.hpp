@@ -12,7 +12,6 @@
 */
 
 #pragma once
-#include <pu/pu_String.hpp>
 #include <pu/ui/render/render_Renderer.hpp>
 #include <vector>
 
@@ -21,30 +20,30 @@ namespace pu::ui
     class Dialog
     {
         public:
-            Dialog(String Title, String Content);
+            Dialog(const std::string& Title, const std::string& Content);
             PU_SMART_CTOR(Dialog)
             ~Dialog();
 
-            void AddOption(String Name);
-            void SetCancelOption(String Name = "Cancel");
+            void AddOption(const std::string& Name);
+            void SetCancelOption(const std::string& Name = "Cancel");
             void RemoveCancelOption();
             bool HasCancelOption();
-            void SetIcon(std::string Icon);
+            void SetIcon(const std::string& Icon);
             bool Hasicon();
             s32 Show(render::Renderer::Ref &Drawer, void *App);
             bool UserCancelled();
             bool IsOk();
         private:
             bool hcancel;
-            String scancel;
+            std::string scancel;
             render::NativeFont tfont;
             render::NativeFont cfont;
             render::NativeFont ofont;
-            String stitle;
-            String scnt;
+            std::string stitle;
+            std::string scnt;
             render::NativeTexture title;
             render::NativeTexture cnt;
-            std::vector<String> sopts;
+            std::vector<std::string> sopts;
             std::vector<render::NativeTexture> opts;
             s32 osel;
             bool cancel;

@@ -18,21 +18,25 @@ namespace pu::ui::render
         return tex;
     }
 
-    NativeTexture RenderText(NativeFont Font, String Text, Color Color)
+    NativeTexture RenderText(NativeFont Font, const std::string& Text, Color Color)
     {
-        NativeSurface txsrf = TTF_RenderUNICODE_Blended_Wrapped(Font, LoadSharedFont(SharedFont::NintendoExtended, 25), (const u16*)Text.AsUTF16().c_str(), { Color.R, Color.G, Color.B, Color.A }, 1280);
+        NativeSurface txsrf = TTF_RenderUTF8_Blended_Wrapped(Font, LoadSharedFont(SharedFont::NintendoExtended, 25), Text.c_str(), { Color.R, Color.G, Color.B, Color.A }, 1280);
         SDL_SetSurfaceAlphaMod(txsrf, 255);
         return ConvertToTexture(txsrf);
     }
 
-    NativeTexture LoadImage(std::string Path)
+    NativeTexture LoadImage(const std::string& Path)
     {
         return ConvertToTexture(IMG_Load(Path.c_str()));
     }
 
+    NativeTexture LoadImage(const std::vector<u8>& image)
+    {
+        return ConvertToTexture(IMG_Load_RW(SDL_RWFromMem((void*)image.data(), image.size()), image.size()));
+    }
+
     NativeFont LoadSharedFont(SharedFont Type, s32 Size)
     {
-#ifdef __SWITCH__
         auto it = shfonts.find(Size);
         if((it != shfonts.end()) && (it->second.first == Type)) return it->second.second;
         PlFontData plfont;
@@ -46,15 +50,9 @@ namespace pu::ui::render
         }
         if(font != NULL) shfonts.insert(std::make_pair(Size, std::make_pair(Type, font)));
         return font;
-#else
-        if (Type == SharedFont::NintendoExtended)
-            return TTF_OpenFont("/home/behemoth/nx/Uranium/fonts/FontNintendoExtended.ttf", Size);
-        else
-            return TTF_OpenFont("/home/behemoth/nx/Uranium/fonts/FontStandard.ttf", Size);
-#endif
     }
 
-    NativeFont LoadFont(std::string Path, s32 Size)
+    NativeFont LoadFont(const std::string& Path, s32 Size)
     {
         auto it = filefonts.find(Size);
         if((it != filefonts.end()) && (it->second.first == Path)) return it->second.second;
@@ -95,34 +93,34 @@ namespace pu::ui::render
 
     #define PROCESS_TMP_STR { \
         int tmpw = 0; \
-        TTF_SizeUNICODE(Font, (const u16*)tmpstr.c_str(), &tmpw, NULL); \
+        TTF_SizeUTF8(Font, tmpstr.c_str(), &tmpw, NULL); \
         if(tmpw > tw) tw = tmpw; \
         int tmph = 0; \
-        TTF_SizeUNICODE(Font, (const u16*)tmpstr.c_str(), NULL, &tmph); \
+        TTF_SizeUTF8(Font, tmpstr.c_str(), NULL, &tmph); \
         th += tmph; \
-        tmpstr = u""; \
+        tmpstr = ""; \
     }
 
-    #define TEXT_SIZE_BASE std::u16string tmpstr; \
+    #define TEXT_SIZE_BASE std::string tmpstr; \
         int tw = 0; \
         int th = 0; \
-        for(auto &ch: Text.AsUTF16()) \
+        for(auto &ch: Text) \
         { \
-            if(ch == u'\n') \
+            if(ch == '\n') \
             PROCESS_TMP_STR \
             else tmpstr += ch; \
         } \
         if(!tmpstr.empty()) \
         PROCESS_TMP_STR
 
-    s32 GetTextWidth(NativeFont Font, String Text)
+    s32 GetTextWidth(NativeFont Font, const std::string& Text)
     {
         TEXT_SIZE_BASE
 
         return (s32)tw;
     }
 
-    s32 GetTextHeight(NativeFont Font, String Text)
+    s32 GetTextHeight(NativeFont Font, const std::string& Text)
     {
         TEXT_SIZE_BASE
 

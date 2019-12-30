@@ -12,7 +12,6 @@
 */
 
 #pragma once
-#include <pu/pu_String.hpp>
 #include <pu/ui/elm/elm_Element.hpp>
 
 namespace pu::ui::elm
@@ -20,7 +19,7 @@ namespace pu::ui::elm
     class TextBlock : public Element
     {
         public:
-            TextBlock(s32 X, s32 Y, String Text, s32 FontSize = 25);
+            TextBlock(s32 X, s32 Y, const std::string& Text, s32 FontSize = 25);
             PU_SMART_CTOR(TextBlock)
             ~TextBlock();
 
@@ -32,15 +31,15 @@ namespace pu::ui::elm
             s32 GetHeight();
             s32 GetTextWidth();
             s32 GetTextHeight();
-            String GetText();
-            void SetText(String Text);
+            std::string GetText();
+            void SetText(const std::string& Text);
             void SetFont(render::NativeFont Font);
             Color GetColor();
             void SetColor(Color Color);
             void OnRender(render::Renderer::Ref &Drawer, s32 X, s32 Y);
             void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos);
         private:
-            String text;
+            std::string text;
             s32 x;
             s32 y;
             render::NativeFont fnt;

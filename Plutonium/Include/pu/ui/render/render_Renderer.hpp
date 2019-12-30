@@ -12,6 +12,8 @@
 */
 
 #pragma once
+#include <switch.h>
+#include <pu/pu_Macros.hpp>
 #include <pu/ui/ui_Types.hpp>
 #include <pu/ui/render/render_SDL2.hpp>
 #include <string>

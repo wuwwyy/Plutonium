@@ -2,7 +2,7 @@
 
 namespace pu::ui::elm
 {
-    Button::Button(s32 X, s32 Y, s32 Width, s32 Height, String Content, Color TextColor, Color Color) : Element::Element()
+    Button::Button(s32 X, s32 Y, s32 Width, s32 Height, const std::string& Content, Color TextColor, Color Color) : Element::Element()
     {
         this->x = X;
         this->y = Y;
@@ -66,12 +66,12 @@ namespace pu::ui::elm
         this->h = Height;
     }
 
-    String Button::GetContent()
+    std::string Button::GetContent()
     {
         return this->cnt;
     }
 
-    void Button::SetContent(String Content)
+    void Button::SetContent(const std::string& Content)
     {
         this->cnt = Content;
         render::DeleteTexture(this->ntex);

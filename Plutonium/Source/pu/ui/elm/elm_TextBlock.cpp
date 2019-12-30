@@ -2,7 +2,7 @@
 
 namespace pu::ui::elm
 {
-    TextBlock::TextBlock(s32 X, s32 Y, String Text, s32 FontSize) : Element::Element()
+    TextBlock::TextBlock(s32 X, s32 Y, const std::string& Text, s32 FontSize) : Element::Element()
     {
         this->x = X;
         this->y = Y;
@@ -62,12 +62,12 @@ namespace pu::ui::elm
         return render::GetTextHeight(this->fnt, this->text);
     }
 
-    String TextBlock::GetText()
+    std::string TextBlock::GetText()
     {
         return this->text;
     }
 
-    void TextBlock::SetText(String Text)
+    void TextBlock::SetText(const std::string& Text)
     {
         this->text = Text;
         render::DeleteTexture(this->ntex);

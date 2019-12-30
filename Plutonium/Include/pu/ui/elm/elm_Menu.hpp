@@ -12,7 +12,6 @@
 */
 
 #pragma once
-#include <pu/pu_String.hpp>
 #include <pu/ui/elm/elm_Element.hpp>
 #include <vector>
 #include <chrono>
@@ -23,11 +22,11 @@ namespace pu::ui::elm
     class MenuItem
     {
         public:
-            MenuItem(String Name);
+            MenuItem(const std::string& Name);
             PU_SMART_CTOR(MenuItem)
 
-            String GetName();
-            void SetName(String Name);
+            std::string GetName();
+            void SetName(const std::string& Name);
             Color GetColor();
             void SetColor(Color Color);
             void AddOnClick(std::function<void()> Callback, u64 Key = KEY_A);
@@ -38,7 +37,7 @@ namespace pu::ui::elm
             void SetIcon(std::string Icon);
             bool HasIcon();
         private:
-            String name;
+            std::string name;
             Color clr;
             bool hasicon;
             std::string icon;

@@ -29,7 +29,8 @@ namespace pu::ui
             std::function<void(u64 Down, u64 Up, u64 Held, Touch Pos)> GetOnInput();
             void AddThread(std::function<void()> Callback);
             std::vector<std::function<void()>> GetAllThreads();
-            void SetBackgroundImage(std::string Path);
+            void SetBackgroundImage(const std::string& Path);
+            void SetBackgroundImage(const std::vector<u8>& RawImage);
             void SetBackgroundColor(Color Color);
             void SimulateTouch(Touch Custom);
             Touch GetSimulatedTouch();

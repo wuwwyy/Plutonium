@@ -13,7 +13,6 @@
 
 #pragma once
 #include <functional>
-#include <pu/pu_String.hpp>
 #include <pu/ui/elm/elm_Element.hpp>
 
 namespace pu::ui::elm
@@ -21,7 +20,7 @@ namespace pu::ui::elm
     class Button : public Element
     {
         public:
-            Button(s32 X, s32 Y, s32 Width, s32 Height, String Content, Color TextColor, Color Color);
+            Button(s32 X, s32 Y, s32 Width, s32 Height, const std::string& Content, Color TextColor, Color Color);
             PU_SMART_CTOR(Button)
             ~Button();
 
@@ -33,8 +32,8 @@ namespace pu::ui::elm
             void SetWidth(s32 Width);
             s32 GetHeight();
             void SetHeight(s32 Height);
-            String GetContent();
-            void SetContent(String Content);
+            std::string GetContent();
+            void SetContent(const std::string& Content);
             Color GetColor();
             void SetColor(Color Color);
             void SetContentFont(render::NativeFont Font);
@@ -48,7 +47,7 @@ namespace pu::ui::elm
             s32 h;
             render::NativeFont fnt;
             Color clr;
-            String cnt;
+            std::string cnt;
             std::function<void()> clickcb;
             bool hover;
             s32 hoverfact;

@@ -2,19 +2,19 @@
 
 namespace pu::ui::elm
 {
-    MenuItem::MenuItem(String Name)
+    MenuItem::MenuItem(const std::string& Name)
     {
         this->clr = { 10, 10, 10, 255 };
         this->name = Name;
         this->hasicon = false;
     }
 
-    String MenuItem::GetName()
+    std::string MenuItem::GetName()
     {
         return this->name;
     }
 
-    void MenuItem::SetName(String Name)
+    void MenuItem::SetName(const std::string& Name)
     {
         this->name = Name;
     }

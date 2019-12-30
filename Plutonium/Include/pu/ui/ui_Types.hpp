@@ -12,7 +12,7 @@
 */
 
 #pragma once
-#include <pu/cross.h>
+#include <switch.h>
 #include <string>
 
 namespace pu::ui
@@ -26,7 +26,7 @@ namespace pu::ui
         u8 B;
         u8 A;
 
-        static Color FromHex(std::string HexFmt);
+        static Color FromHex(const std::string& HexFmt);
     };
 
     struct Touch

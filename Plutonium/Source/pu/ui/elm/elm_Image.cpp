@@ -2,7 +2,7 @@
 
 namespace pu::ui::elm
 {
-    Image::Image(s32 X, s32 Y, String Image) : Element::Element()
+    Image::Image(s32 X, s32 Y, const std::string& Image) : Element::Element()
     {
         this->x = X;
         this->y = Y;
@@ -70,30 +70,33 @@ namespace pu::ui::elm
         this->rendopts.Angle = Angle;
     }
 
-    String Image::GetImage()
-    {
-        return this->img;
-    }
-
-    void Image::SetImage(String Image)
+    void Image::SetImage(const std::string& Image)
     {
         if(this->ntex != NULL) render::DeleteTexture(this->ntex);
         this->ntex = NULL;
-        std::ifstream ifs(Image.AsUTF8());
+        std::ifstream ifs(Image);
         bool ok = ifs.good();
         ifs.close();
         if(ok)    
         {
-            this->img = Image;
-            this->ntex = render::LoadImage(Image.AsUTF8());
+            this->ntex = render::LoadImage(Image);
             this->rendopts.Width = render::GetTextureWidth(this->ntex);
             this->rendopts.Height = render::GetTextureHeight(this->ntex);
         }
     }
 
+    void Image::SetImage(const std::vector<u8>& RawImage)
+    {
+        if(this->ntex != NULL) render::DeleteTexture(this->ntex);
+        this->ntex = NULL;
+            this->ntex = render::LoadImage(RawImage);
+            this->rendopts.Width = render::GetTextureWidth(this->ntex);
+            this->rendopts.Height = render::GetTextureHeight(this->ntex);
+    }
+
     bool Image::IsImageValid()
     {
-        return ((ntex != NULL) && this->img.HasAny());
+        return ntex != NULL;
     }
 
     void Image::OnRender(render::Renderer::Ref &Drawer, s32 X, s32 Y)

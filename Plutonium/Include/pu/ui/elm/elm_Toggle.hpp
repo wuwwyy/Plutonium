@@ -12,7 +12,6 @@
 */
 
 #pragma once
-#include <pu/pu_String.hpp>
 #include <pu/ui/elm/elm_Element.hpp>
 
 namespace pu::ui::elm
@@ -20,7 +19,7 @@ namespace pu::ui::elm
     class Toggle : public Element
     {
         public:
-            Toggle(s32 X, s32 Y, String Content, u64 Key, Color Color);
+            Toggle(s32 X, s32 Y, const std::string& Content, u64 Key, Color Color);
             PU_SMART_CTOR(Toggle)
             ~Toggle();
 
@@ -30,8 +29,8 @@ namespace pu::ui::elm
             void SetY(s32 Y);
             s32 GetWidth();
             s32 GetHeight();
-            String GetContent();
-            void SetContent(String Content);
+            std::string GetContent();
+            void SetContent(const std::string& Content);
             void SetFont(render::NativeFont Font);
             Color GetColor();
             void SetColor(Color General);
@@ -41,7 +40,7 @@ namespace pu::ui::elm
             void OnRender(render::Renderer::Ref &Drawer, s32 X, s32 Y);
             void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos);
         private:
-            String cnt;
+            std::string cnt;
             s32 x;
             s32 y;
             u64 key;
