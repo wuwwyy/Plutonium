@@ -5,8 +5,8 @@ namespace pu::ui::render
 {
     NativeRenderer purend = NULL;
 
-    extern std::unordered_map<u32, std::pair<std::string, NativeFont>> filefonts;
-    extern std::unordered_map<u32, std::pair<SharedFont, NativeFont>> shfonts;
+    extern std::unordered_map<u32, std::unordered_map<std::string, NativeFont>> filefonts;
+    extern std::unordered_map<u32, std::unordered_map<SharedFont, NativeFont>> shfonts;
 
     Renderer::Renderer(u32 SDLFlags, RendererInitOptions Options, u32 NativeRendererFlags, u32 Width, u32 Height)
     {
@@ -63,14 +63,13 @@ namespace pu::ui::render
 
     void Renderer::Finalize()
     {
-        for(auto &font: shfonts)
-        {
-            render::DeleteFont(font.second.second);
-        }
-        for(auto &font: filefonts)
-        {
-            render::DeleteFont(font.second.second);
-        }
+        for(auto &map: shfonts)
+            for (auto &font: map.second)
+                render::DeleteFont(font.second);
+
+        for(auto &map: filefonts)
+            for (auto &font: map.second)
+                render::DeleteFont(font.second);
 
         if(this->initialized)
         {

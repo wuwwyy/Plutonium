@@ -2,20 +2,17 @@
 
 namespace pu::ui::elm
 {
-    TextBlock::TextBlock(s32 X, s32 Y, const std::string& Text, s32 FontSize) : Element::Element()
+    TextBlock::TextBlock(s32 X, s32 Y, const std::string& Text, s32 FontSize)
+        : Element::Element(), x(X), y(Y), text(Text)
     {
-        this->x = X;
-        this->y = Y;
-        this->text = Text;
+        printf("loading TextBlock: %d:%d\n", X, Y);
         this->clr = { 0, 0, 0, 255 };
-        this->fnt = render::LoadDefaultFont(FontSize);
-        this->fsize = FontSize;
-        this->ntex = render::RenderText(this->fnt, Text, this->clr);
+        this->SetFontSize(FontSize);
     }
 
     TextBlock::~TextBlock()
     {
-        if(this->ntex != NULL)
+        if(this->ntex != nullptr)
         {
             render::DeleteTexture(this->ntex);
             this->ntex = NULL;
@@ -54,12 +51,12 @@ namespace pu::ui::elm
 
     s32 TextBlock::GetTextWidth()
     {
-        return render::GetTextWidth(this->fnt, this->text);
+        return render::GetTextWidth(this->font, this->meme, this->text);
     }
 
     s32 TextBlock::GetTextHeight()
     {
-        return render::GetTextHeight(this->fnt, this->text);
+        return render::GetTextHeight(this->font, this->meme, this->text);
     }
 
     std::string TextBlock::GetText()
@@ -70,15 +67,16 @@ namespace pu::ui::elm
     void TextBlock::SetText(const std::string& Text)
     {
         this->text = Text;
-        render::DeleteTexture(this->ntex);
-        this->ntex = render::RenderText(this->fnt, Text, this->clr);
+        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        this->ntex = render::RenderText(this->font, this->meme, Text, this->clr);
     }
 
-    void TextBlock::SetFont(render::NativeFont Font)
+    void TextBlock::SetFontSize(s32 FontSize)
     {
-        this->fnt = Font;
-        render::DeleteTexture(this->ntex);
-        this->ntex = render::RenderText(Font, this->text, this->clr);
+        this->font = render::LoadDefaultFont(FontSize);
+        this->meme = render::LoadSharedFont(render::SharedFont::NintendoExtended, FontSize);
+        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        this->ntex = render::RenderText(this->font, this->meme, this->text, this->clr);
     }
 
     Color TextBlock::GetColor()
@@ -89,8 +87,8 @@ namespace pu::ui::elm
     void TextBlock::SetColor(Color Color)
     {
         this->clr = Color;
-        render::DeleteTexture(this->ntex);
-        this->ntex = render::RenderText(this->fnt, this->text, Color);
+        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        this->ntex = render::RenderText(this->font, this->meme, this->text, Color);
     }
 
     void TextBlock::OnRender(render::Renderer::Ref &Drawer, s32 X, s32 Y)

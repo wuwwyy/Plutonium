@@ -39,7 +39,7 @@ namespace pu::ui::elm
             void OnRender(render::Renderer::Ref &Drawer, s32 X, s32 Y);
             void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos);
         private:
-            render::NativeTexture ntex;
+            render::NativeTexture ntex = nullptr;
             render::NativeTextureRenderOptions rendopts;
             s32 x;
             s32 y;

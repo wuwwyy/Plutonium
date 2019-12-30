@@ -31,7 +31,7 @@ namespace pu::ui::elm
             s32 GetHeight();
             std::string GetContent();
             void SetContent(const std::string& Content);
-            void SetFont(render::NativeFont Font);
+            void SetFontSize(s32 FontSize);
             Color GetColor();
             void SetColor(Color General);
             u64 GetKey();
@@ -46,9 +46,9 @@ namespace pu::ui::elm
             u64 key;
             bool checked;
             Color clr;
-            render::NativeFont fnt;
-            s32 fsize;
+            render::NativeFont font;
+            render::NativeFont meme;
             s32 togfact;
-            render::NativeTexture ntex;
+            render::NativeTexture ntex = nullptr;
     };
 }

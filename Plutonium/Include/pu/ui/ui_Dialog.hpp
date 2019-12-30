@@ -36,9 +36,12 @@ namespace pu::ui
         private:
             bool hcancel;
             std::string scancel;
-            render::NativeFont tfont;
-            render::NativeFont cfont;
-            render::NativeFont ofont;
+            render::NativeFont titleFont;
+            render::NativeFont contentFont;
+            render::NativeFont optionsFont;
+            render::NativeFont titleFontEx;
+            render::NativeFont contentFontEx;
+            render::NativeFont optionsFontEx;
             std::string stitle;
             std::string scnt;
             render::NativeTexture title;

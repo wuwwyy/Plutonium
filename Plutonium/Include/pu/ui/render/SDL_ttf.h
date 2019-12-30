@@ -168,9 +168,9 @@ extern DECLSPEC int SDLCALL TTF_GlyphMetrics(TTF_Font *font, Uint16 ch,
                                      int *miny, int *maxy, int *advance);
 
 /* Get the dimensions of a rendered string of text */
-extern DECLSPEC int SDLCALL TTF_SizeText(TTF_Font *font, const char *text, int *w, int *h);
-extern DECLSPEC int SDLCALL TTF_SizeUTF8(TTF_Font *font, const char *text, int *w, int *h);
-extern DECLSPEC int SDLCALL TTF_SizeUNICODE(TTF_Font *font, const Uint16 *text, int *w, int *h);
+extern DECLSPEC int SDLCALL TTF_SizeText(TTF_Font *font, TTF_Font *meme, const char *text, int *w, int *h);
+extern DECLSPEC int SDLCALL TTF_SizeUTF8(TTF_Font *font, TTF_Font *meme, const char *text, int *w, int *h);
+extern DECLSPEC int SDLCALL TTF_SizeUNICODE(TTF_Font *font, TTF_Font *meme, const Uint16 *text, int *w, int *h);
 
 /* Create an 8-bit palettized surface and render the given text at
    fast quality with the given font and color.  The 0 pixel is the
@@ -178,11 +178,11 @@ extern DECLSPEC int SDLCALL TTF_SizeUNICODE(TTF_Font *font, const Uint16 *text, 
    to the text color.
    This function returns the new surface, or NULL if there was an error.
 */
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Solid(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Solid(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg);
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Solid(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Solid(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg);
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Solid(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Solid(TTF_Font *font, TTF_Font *meme,
                 const Uint16 *text, SDL_Color fg);
 
 /* Create an 8-bit palettized surface and render the given glyph at
@@ -192,7 +192,7 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Solid(TTF_Font *font,
    centering in the X direction, and aligned normally in the Y direction.
    This function returns the new surface, or NULL if there was an error.
 */
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Solid(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Solid(TTF_Font *font, TTF_Font *meme,
                     Uint16 ch, SDL_Color fg);
 
 /* Create an 8-bit palettized surface and render the given text at
@@ -200,11 +200,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Solid(TTF_Font *font,
    while other pixels have varying degrees of the foreground color.
    This function returns the new surface, or NULL if there was an error.
 */
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Shaded(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Shaded(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg, SDL_Color bg);
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Shaded(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Shaded(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg, SDL_Color bg);
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Shaded(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Shaded(TTF_Font *font, TTF_Font *meme,
                 const Uint16 *text, SDL_Color fg, SDL_Color bg);
 
 /* Create an 8-bit palettized surface and render the given glyph at
@@ -214,18 +214,18 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Shaded(TTF_Font *font,
    direction, and aligned normally in the Y direction.
    This function returns the new surface, or NULL if there was an error.
 */
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Shaded(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Shaded(TTF_Font *font, TTF_Font *meme,
                 Uint16 ch, SDL_Color fg, SDL_Color bg);
 
 /* Create a 32-bit ARGB surface and render the given text at high quality,
    using alpha blending to dither the font with the given color.
    This function returns the new surface, or NULL if there was an error.
 */
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Blended(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Blended(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg);
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Blended(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Blended(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg);
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Blended(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Blended(TTF_Font *font, TTF_Font *meme,
                 const Uint16 *text, SDL_Color fg);
 
 
@@ -248,7 +248,7 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Blended_Wrapped(TTF_Font
    direction, and aligned normally in the Y direction.
    This function returns the new surface, or NULL if there was an error.
 */
-extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Blended(TTF_Font *font,
+extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Blended(TTF_Font *font, TTF_Font *meme,
                         Uint16 ch, SDL_Color fg);
 
 /* For compatibility with previous versions, here are the old functions */

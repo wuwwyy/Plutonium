@@ -36,7 +36,7 @@ namespace pu::ui::elm
             void SetContent(const std::string& Content);
             Color GetColor();
             void SetColor(Color Color);
-            void SetContentFont(render::NativeFont Font);
+            void SetFontSize(s32 FontSize);
             void SetOnClick(std::function<void()> ClickCallback);
             void OnRender(render::Renderer::Ref &Drawer, s32 X, s32 Y);
             void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos);
@@ -45,7 +45,8 @@ namespace pu::ui::elm
             s32 y;
             s32 w;
             s32 h;
-            render::NativeFont fnt;
+            render::NativeFont font;
+            render::NativeFont meme;
             Color clr;
             std::string cnt;
             std::function<void()> clickcb;

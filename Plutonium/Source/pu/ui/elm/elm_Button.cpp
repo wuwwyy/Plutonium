@@ -2,28 +2,19 @@
 
 namespace pu::ui::elm
 {
-    Button::Button(s32 X, s32 Y, s32 Width, s32 Height, const std::string& Content, Color TextColor, Color Color) : Element::Element()
+    Button::Button(s32 X, s32 Y, s32 Width, s32 Height, const std::string& Content, Color TextColor, Color Color)
+        : Element::Element(), x(X), y(Y), w(Width), h(Height), cnt(Content), clr(Color)
     {
-        this->x = X;
-        this->y = Y;
-        this->w = Width;
-        this->h = Height;
-        this->cnt = Content;
-        this->clr = Color;
         this->hover = false;
         this->hoverfact = 255;
-        this->fnt = render::LoadDefaultFont(25);
-        this->ntex = render::RenderText(this->fnt, Content, TextColor);
+        this->SetFontSize(25);
         this->clickcb = [](){};
     }
 
     Button::~Button()
     {
-        if(this->ntex != NULL)
-        {
+        if(this->ntex != nullptr)
             render::DeleteTexture(this->ntex);
-            this->ntex = NULL;
-        }
     }
 
     s32 Button::GetX()
@@ -74,8 +65,8 @@ namespace pu::ui::elm
     void Button::SetContent(const std::string& Content)
     {
         this->cnt = Content;
-        render::DeleteTexture(this->ntex);
-        this->ntex = render::RenderText(this->fnt, Content, this->clr);
+        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        this->ntex = render::RenderText(this->font, this->meme, Content, this->clr);
     }
 
     Color Button::GetColor()
@@ -86,15 +77,16 @@ namespace pu::ui::elm
     void Button::SetColor(Color Color)
     {
         this->clr = Color;
-        render::DeleteTexture(this->ntex);
-        this->ntex = render::RenderText(this->fnt, this->cnt, Color);
+        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        this->ntex = render::RenderText(this->font, this->meme, this->cnt, Color);
     }
 
-    void Button::SetContentFont(render::NativeFont Font)
+    void Button::SetFontSize(s32 FontSize)
     {
-        this->fnt = Font;
-        render::DeleteTexture(this->ntex);
-        this->ntex = render::RenderText(this->fnt, this->cnt, this->clr);
+        this->font = render::LoadDefaultFont(FontSize);
+        this->meme = render::LoadSharedFont(render::SharedFont::NintendoExtended, FontSize);
+        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        this->ntex = render::RenderText(this->font, this->meme, this->cnt, this->clr);
     }
 
     void Button::SetOnClick(std::function<void()> ClickCallback)
@@ -136,8 +128,8 @@ namespace pu::ui::elm
             }
             else Drawer->RenderRectangleFill(this->clr, rdx, rdy, this->w, this->h);
         }
-        s32 xw = render::GetTextWidth(this->fnt, this->cnt);
-        s32 xh = render::GetTextHeight(this->fnt, this->cnt);
+        s32 xw = render::GetTextWidth(this->font, this->meme, this->cnt);
+        s32 xh = render::GetTextHeight(this->font, this->meme, this->cnt);
         s32 tx = ((this->w - xw) / 2) + rdx;
         s32 ty = ((this->h - xh) / 2) + rdy;
         Drawer->RenderTexture(this->ntex, tx, ty);

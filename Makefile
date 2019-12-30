@@ -8,5 +8,7 @@ clean:
 	@$(MAKE) clean -C Plutonium/
 	@$(MAKE) clean -C Example/
 
-switch: lib
+example: lib
 	@$(MAKE) -C Example/
+
+all: lib example

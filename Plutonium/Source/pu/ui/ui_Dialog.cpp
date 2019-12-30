@@ -7,11 +7,14 @@ namespace pu::ui
     Dialog::Dialog(const std::string& Title, const std::string& Content)
         : stitle(Title), scnt(Content)
     {
-        this->tfont = render::LoadDefaultFont(30);
-        this->cfont = render::LoadDefaultFont(20);
-        this->ofont = render::LoadDefaultFont(18);
-        this->title = render::RenderText(this->tfont, Title, { 10, 10, 10, 255 });
-        this->cnt = render::RenderText(this->cfont, Content, { 20, 20, 20, 255 });
+        this->titleFont = render::LoadDefaultFont(30);
+        this->contentFont = render::LoadDefaultFont(20);
+        this->optionsFont = render::LoadDefaultFont(18);
+        this->titleFontEx = render::LoadSharedFont(render::SharedFont::NintendoExtended, 30);
+        this->contentFontEx = render::LoadSharedFont(render::SharedFont::NintendoExtended, 20);
+        this->optionsFontEx = render::LoadSharedFont(render::SharedFont::NintendoExtended, 18);
+        this->title = render::RenderText(this->titleFont, this->titleFontEx, Title, { 10, 10, 10, 255 });
+        this->cnt = render::RenderText(this->contentFont, this->contentFontEx, Content, { 20, 20, 20, 255 });
         this->osel = 0;
         this->prevosel = 0;
         this->selfact = 255;
@@ -44,7 +47,7 @@ namespace pu::ui
 
     void Dialog::AddOption(const std::string& Name)
     {
-        this->opts.push_back(render::RenderText(this->ofont, Name, { 10, 10, 10, 255 }));
+        this->opts.push_back(render::RenderText(this->optionsFont, this->optionsFontEx, Name, { 10, 10, 10, 255 }));
         this->sopts.push_back(Name);
     }
 
@@ -84,24 +87,24 @@ namespace pu::ui
         s32 dw = (20 * (this->opts.size() - 1)) + 250;
         for(s32 i = 0; i < this->opts.size(); i++)
         {
-            s32 tw = render::GetTextWidth(this->ofont, this->sopts[i]);
+            s32 tw = render::GetTextWidth(this->optionsFont, this->optionsFontEx, this->sopts[i]);
             dw += tw + 20;
         }
         if(dw > 1280) dw = 1280;
         s32 icm = 30;
         s32 elemh = 60;
-        s32 tdw = render::GetTextWidth(this->cfont, this->scnt) + 90;
+        s32 tdw = render::GetTextWidth(this->contentFont, this->contentFontEx, this->scnt) + 90;
         if(tdw > dw) dw = tdw;
-        tdw = render::GetTextWidth(this->tfont, this->stitle) + 90;
+        tdw = render::GetTextWidth(this->titleFont, this->titleFontEx, this->stitle) + 90;
         if(tdw > dw) dw = tdw;
-        s32 ely = render::GetTextHeight(this->tfont, this->stitle) + render::GetTextHeight(this->cfont, this->scnt) + 140;
+        s32 ely = render::GetTextHeight(this->titleFont, this->titleFontEx, this->stitle) + render::GetTextHeight(this->contentFont, this->contentFontEx, this->scnt) + 140;
         if(this->hicon)
         {
             s32 tely = render::GetTextureHeight(this->icon) + icm + 25;
             if(tely > ely) ely = tely;
-            tdw = render::GetTextWidth(this->cfont, this->scnt) + 90 + render::GetTextureWidth(this->icon) + 20;
+            tdw = render::GetTextWidth(this->contentFont, this->contentFontEx, this->scnt) + 90 + render::GetTextureWidth(this->icon) + 20;
             if(tdw > dw) dw = tdw;
-            tdw = render::GetTextWidth(this->tfont, this->stitle) + 90 + render::GetTextureWidth(this->icon) + 20;
+            tdw = render::GetTextWidth(this->titleFont, this->titleFontEx, this->stitle) + 90 + render::GetTextureWidth(this->icon) + 20;
             if(tdw > dw) dw = tdw;
         }
         if(dw > 1280) dw = 1280;
@@ -201,8 +204,8 @@ namespace pu::ui
                 for(s32 i = 0; i < this->opts.size(); i++)
                 {
                     const std::string txt = this->sopts[i];
-                    s32 tw = render::GetTextWidth(this->ofont, txt);
-                    s32 th = render::GetTextHeight(this->ofont, txt);
+                    s32 tw = render::GetTextWidth(this->optionsFont, this->optionsFontEx, txt);
+                    s32 th = render::GetTextHeight(this->optionsFont, this->optionsFontEx, txt);
                     s32 tx = elx + ((elemw - tw) / 2) + ((elemw + 20) * i);
                     s32 ty = ely + ((elemh - th) / 2);
                     s32 rx = elx + ((elemw + 20) * i);

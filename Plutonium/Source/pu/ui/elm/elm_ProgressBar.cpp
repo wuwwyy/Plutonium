@@ -2,16 +2,12 @@
 
 namespace pu::ui::elm
 {
-    ProgressBar::ProgressBar(s32 X, s32 Y, s32 Width, s32 Height, double MaxValue) : Element::Element()
+    ProgressBar::ProgressBar(s32 X, s32 Y, s32 Width, s32 Height, double MaxValue)
+        : Element::Element(), x(X), y(Y), w(Width), h(Height), maxval(MaxValue)
     {
-        this->x = X;
-        this->y = Y;
-        this->w = Width;
-        this->h = Height;
         this->clr = { 140, 140, 140, 255 };
         this->oclr = { 139, 195, 74, 255 };
         this->val = 0.0f;
-        this->maxval = MaxValue;
     }
 
     s32 ProgressBar::GetX()

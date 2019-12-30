@@ -63,6 +63,7 @@ namespace pu::ui::elm
         {
             this->icon = Icon;
             this->hasicon = true;
+            this->factor = 0;
         }
         ifs.close();
     }
@@ -72,15 +73,21 @@ namespace pu::ui::elm
         return this->hasicon;
     }
 
-    Menu::Menu(s32 X, s32 Y, s32 Width, Color OptionColor, s32 ItemSize, s32 ItemsToShow) : Element::Element()
+    void MenuItem::SetFactor(float Factor)
     {
-        this->x = X;
-        this->y = Y;
-        this->w = Width;
-        this->clr = OptionColor;
+        this->factor = Factor;
+    }
+
+    float MenuItem::GetFactor()
+    {
+        return this->factor;
+    }
+
+    Menu::Menu(s32 X, s32 Y, s32 Width, Color OptionColor, s32 ItemSize, s32 ItemsToShow)
+        : Element::Element(), x(X), y(Y), w(Width), clr(OptionColor), isize(ItemSize), ishow(ItemsToShow)
+    {
+        printf("loading menu: %d:%d\n", X, Y);
         this->scb = { 110, 110, 110, 255 };
-        this->isize = ItemSize;
-        this->ishow = ItemsToShow;
         this->previsel = 0;
         this->isel = 0;
         this->fisel = 0;
@@ -92,6 +99,7 @@ namespace pu::ui::elm
         this->fcs = { 40, 40, 40, 255 };
         this->basestatus = 0;
         this->font = render::LoadDefaultFont(25);
+        this->meme = render::LoadSharedFont(render::SharedFont::NintendoExtended, 25);
     }
 
     s32 Menu::GetX()
@@ -277,12 +285,14 @@ namespace pu::ui::elm
                 }
                 else Drawer->RenderRectangleFill(this->clr, cx, cy, cw, ch);
                 auto itm = this->itms[i];
-                s32 xh = render::GetTextHeight(this->font, itm->GetName());
+                s32 xh = render::GetTextHeight(this->font, this->meme, itm->GetName());
                 s32 tx = (cx + 25);
                 s32 ty = ((ch - xh) / 2) + cy;
                 if(itm->HasIcon())
                 {
-                    float factor = (float)render::GetTextureHeight(curicon)/(float)render::GetTextureWidth(curicon);
+                    if (itm->GetFactor() == 0)
+                        itm->SetFactor((float)render::GetTextureHeight(curicon)/(float)render::GetTextureWidth(curicon));
+                    float factor = itm->GetFactor();
                     s32 icw = (this->isize - 10);
                     s32 ich = icw;
                     s32 icx = (cx + 25);
@@ -418,7 +428,7 @@ namespace pu::ui::elm
                     {
                         this->isel = 0;
                         this->fisel = 0;
-                        if(this->itms.size() >= this->ishow)
+                        if(this->itms.size() > this->ishow)
                         {
                             ReloadItemRenders();
                         }
@@ -469,7 +479,7 @@ namespace pu::ui::elm
                     {
                         this->isel = this->itms.size() - 1;
                         this->fisel = 0;
-                        if(this->itms.size() >= this->ishow) {
+                        if(this->itms.size() > this->ishow) {
                             this->fisel = this->itms.size() - this->ishow;
                             ReloadItemRenders();
                         }
@@ -503,7 +513,7 @@ namespace pu::ui::elm
         for(s32 i = this->fisel; i < (its + this->fisel); i++)
         {
             auto strname = this->itms[i]->GetName();
-            auto tex = render::RenderText(this->font, strname, this->itms[i]->GetColor());
+            auto tex = render::RenderText(this->font, this->meme, strname, this->itms[i]->GetColor());
             this->loadednames.push_back(tex);
             if(this->itms[i]->HasIcon())
             {

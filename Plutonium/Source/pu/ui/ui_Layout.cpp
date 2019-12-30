@@ -12,7 +12,7 @@ namespace pu::ui
 
     Layout::~Layout()
     {
-        if(this->overbgtex != NULL) render::DeleteTexture(this->overbgtex);
+        if(this->overbgtex != nullptr) render::DeleteTexture(this->overbgtex);
     }
 
     bool Layout::HasChilds()
@@ -42,21 +42,21 @@ namespace pu::ui
 
     void Layout::SetBackgroundImage(const std::string& Path)
     {
-        if(this->overbgtex != NULL) render::DeleteTexture(this->overbgtex);
+        if(this->overbgtex != nullptr) render::DeleteTexture(this->overbgtex);
         this->hasimage = true;
         this->overbgtex = render::LoadImage(Path);
     }
 
     void Layout::SetBackgroundImage(const std::vector<u8>& RawImage)
     {
-        if(this->overbgtex != NULL) render::DeleteTexture(this->overbgtex);
+        if(this->overbgtex != nullptr) render::DeleteTexture(this->overbgtex);
         this->hasimage = true;
         this->overbgtex = render::LoadImage(RawImage);
     }
 
     void Layout::SetBackgroundColor(Color Color)
     {
-        if(this->overbgtex != NULL) render::DeleteTexture(this->overbgtex);
+        if(this->overbgtex != nullptr) render::DeleteTexture(this->overbgtex);
         this->hasimage = false;
         this->overbgcolor = Color;
     }

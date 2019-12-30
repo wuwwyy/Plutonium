@@ -1152,7 +1152,7 @@ int TTF_GlyphMetrics(TTF_Font *font, Uint16 ch,
     return 0;
 }
 
-int TTF_SizeText(TTF_Font *font, const char *text, int *w, int *h)
+int TTF_SizeText(TTF_Font *font, TTF_Font *meme, const char *text, int *w, int *h)
 {
     int status = -1;
     Uint8 *utf8;
@@ -1162,7 +1162,7 @@ int TTF_SizeText(TTF_Font *font, const char *text, int *w, int *h)
     utf8 = SDL_stack_alloc(Uint8, LATIN1_to_UTF8_len(text));
     if (utf8) {
         LATIN1_to_UTF8(text, utf8);
-        status = TTF_SizeUTF8(font, (char *)utf8, w, h);
+        status = TTF_SizeUTF8(font, meme, (char *)utf8, w, h);
         SDL_stack_free(utf8);
     } else {
         SDL_OutOfMemory();
@@ -1170,7 +1170,7 @@ int TTF_SizeText(TTF_Font *font, const char *text, int *w, int *h)
     return status;
 }
 
-static int TTF_SizeUTF8_Internal(TTF_Font *font, const char *text, int *w, int *h, int *xstart, int *ystart)
+static int TTF_SizeUTF8_Internal(TTF_Font *font, TTF_Font *meme, const char *text, int *w, int *h, int *xstart, int *ystart)
 {
     int x = 0;
     int minx = 0, maxx = 0;
@@ -1179,10 +1179,11 @@ static int TTF_SizeUTF8_Internal(TTF_Font *font, const char *text, int *w, int *
     FT_Error error;
     FT_UInt prev_index = 0;
     size_t textlen;
+    TTF_Font *curfont;
 
     TTF_CHECKPOINTER(text, -1);
 
-    maxy = font->height;
+    maxy = SDL_max(font->height, meme->height);
 
     /* Load each character and sum it's bounding box */
     textlen = SDL_strlen(text);
@@ -1192,17 +1193,23 @@ static int TTF_SizeUTF8_Internal(TTF_Font *font, const char *text, int *w, int *
             continue;
         }
 
-        error = Find_Glyph(font, c, CACHED_METRICS);
+        if (!FT_Get_Char_Index(font->face, c) == 0)
+            curfont = font;
+        else
+            curfont = meme;
+
+        error = Find_Glyph(curfont, c, CACHED_METRICS);
+
         if (error) {
             TTF_SetFTError("Couldn't find glyph", error);
             return -1;
         }
-        glyph = font->current;
+        glyph = curfont->current;
 
         /* handle kerning */
-        if (font->use_kerning && prev_index && glyph->index) {
+        if (curfont->use_kerning && prev_index && glyph->index) {
             FT_Vector delta;
-            FT_Get_Kerning(font->face, prev_index, glyph->index, ft_kerning_default, &delta);
+            FT_Get_Kerning(curfont->face, prev_index, glyph->index, ft_kerning_default, &delta);
             x += delta.x >> 6;
         }
 
@@ -1239,11 +1246,11 @@ static int TTF_SizeUTF8_Internal(TTF_Font *font, const char *text, int *w, int *
     return 0;
 }
 
-int TTF_SizeUTF8(TTF_Font *font, const char *text, int *w, int *h) {
-    return TTF_SizeUTF8_Internal(font, text, w, h, NULL, NULL);
+int TTF_SizeUTF8(TTF_Font *font, TTF_Font *meme, const char *text, int *w, int *h) {
+    return TTF_SizeUTF8_Internal(font, meme, text, w, h, NULL, NULL);
 }
 
-int TTF_SizeUNICODE(TTF_Font *font, const Uint16 *text, int *w, int *h)
+int TTF_SizeUNICODE(TTF_Font *font, TTF_Font *meme, const Uint16 *text, int *w, int *h)
 {
     int status = -1;
     Uint8 *utf8;
@@ -1253,7 +1260,7 @@ int TTF_SizeUNICODE(TTF_Font *font, const Uint16 *text, int *w, int *h)
     utf8 = SDL_stack_alloc(Uint8, UCS2_to_UTF8_len(text));
     if (utf8) {
         UCS2_to_UTF8(text, utf8);
-        status = TTF_SizeUTF8(font, (char *)utf8, w, h);
+        status = TTF_SizeUTF8(font, meme, (char *)utf8, w, h);
         SDL_stack_free(utf8);
     } else {
         SDL_OutOfMemory();
@@ -1261,7 +1268,7 @@ int TTF_SizeUNICODE(TTF_Font *font, const Uint16 *text, int *w, int *h)
     return status;
 }
 
-SDL_Surface *TTF_RenderText_Solid(TTF_Font *font,
+SDL_Surface *TTF_RenderText_Solid(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg)
 {
     SDL_Surface *surface = NULL;
@@ -1272,7 +1279,7 @@ SDL_Surface *TTF_RenderText_Solid(TTF_Font *font,
     utf8 = SDL_stack_alloc(Uint8, LATIN1_to_UTF8_len(text));
     if (utf8) {
         LATIN1_to_UTF8(text, utf8);
-        surface = TTF_RenderUTF8_Solid(font, (char *)utf8, fg);
+        surface = TTF_RenderUTF8_Solid(font, meme, (char *)utf8, fg);
         SDL_stack_free(utf8);
     } else {
         SDL_OutOfMemory();
@@ -1280,7 +1287,7 @@ SDL_Surface *TTF_RenderText_Solid(TTF_Font *font,
     return surface;
 }
 
-SDL_Surface *TTF_RenderUTF8_Solid(TTF_Font *font,
+SDL_Surface *TTF_RenderUTF8_Solid(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg)
 {
     int xstart, ystart;
@@ -1300,7 +1307,7 @@ SDL_Surface *TTF_RenderUTF8_Solid(TTF_Font *font,
     TTF_CHECKPOINTER(text, NULL);
 
     /* Get the dimensions of the text surface */
-    if ((TTF_SizeUTF8_Internal(font, text, &width, &height, &xstart, &ystart) < 0) || !width) {
+    if ((TTF_SizeUTF8_Internal(font, meme, text, &width, &height, &xstart, &ystart) < 0) || !width) {
         TTF_SetError("Text has zero width");
         return NULL;
     }
@@ -1374,7 +1381,7 @@ SDL_Surface *TTF_RenderUTF8_Solid(TTF_Font *font,
     return textbuf;
 }
 
-SDL_Surface *TTF_RenderUNICODE_Solid(TTF_Font *font,
+SDL_Surface *TTF_RenderUNICODE_Solid(TTF_Font *font, TTF_Font *meme,
                 const Uint16 *text, SDL_Color fg)
 {
     SDL_Surface *surface = NULL;
@@ -1385,7 +1392,7 @@ SDL_Surface *TTF_RenderUNICODE_Solid(TTF_Font *font,
     utf8 = SDL_stack_alloc(Uint8, UCS2_to_UTF8_len(text));
     if (utf8) {
         UCS2_to_UTF8(text, utf8);
-        surface = TTF_RenderUTF8_Solid(font, (char *)utf8, fg);
+        surface = TTF_RenderUTF8_Solid(font, meme, (char *)utf8, fg);
         SDL_stack_free(utf8);
     } else {
         SDL_OutOfMemory();
@@ -1393,7 +1400,7 @@ SDL_Surface *TTF_RenderUNICODE_Solid(TTF_Font *font,
     return surface;
 }
 
-SDL_Surface *TTF_RenderGlyph_Solid(TTF_Font *font, Uint16 ch, SDL_Color fg)
+SDL_Surface *TTF_RenderGlyph_Solid(TTF_Font *font, TTF_Font *meme, Uint16 ch, SDL_Color fg)
 {
     Uint16 ucs2[2];
     Uint8 utf8[4];
@@ -1401,10 +1408,10 @@ SDL_Surface *TTF_RenderGlyph_Solid(TTF_Font *font, Uint16 ch, SDL_Color fg)
     ucs2[0] = ch;
     ucs2[1] = 0;
     UCS2_to_UTF8(ucs2, utf8);
-    return TTF_RenderUTF8_Solid(font, (char *)utf8, fg);
+    return TTF_RenderUTF8_Solid(font, meme, (char *)utf8, fg);
 }
 
-SDL_Surface *TTF_RenderText_Shaded(TTF_Font *font,
+SDL_Surface *TTF_RenderText_Shaded(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg, SDL_Color bg)
 {
     SDL_Surface *surface = NULL;
@@ -1415,7 +1422,7 @@ SDL_Surface *TTF_RenderText_Shaded(TTF_Font *font,
     utf8 = SDL_stack_alloc(Uint8, LATIN1_to_UTF8_len(text));
     if (utf8) {
         LATIN1_to_UTF8(text, utf8);
-        surface = TTF_RenderUTF8_Shaded(font, (char *)utf8, fg, bg);
+        surface = TTF_RenderUTF8_Shaded(font, meme, (char *)utf8, fg, bg);
         SDL_stack_free(utf8);
     } else {
         SDL_OutOfMemory();
@@ -1425,7 +1432,7 @@ SDL_Surface *TTF_RenderText_Shaded(TTF_Font *font,
 
 /* Convert the UTF-8 text to UNICODE and render it
 */
-SDL_Surface *TTF_RenderUTF8_Shaded(TTF_Font *font,
+SDL_Surface *TTF_RenderUTF8_Shaded(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg, SDL_Color bg)
 {
     int xstart, ystart;
@@ -1451,7 +1458,7 @@ SDL_Surface *TTF_RenderUTF8_Shaded(TTF_Font *font,
     TTF_CHECKPOINTER(text, NULL);
 
     /* Get the dimensions of the text surface */
-    if ((TTF_SizeUTF8_Internal(font, text, &width, &height, &xstart, &ystart) < 0) || !width) {
+    if ((TTF_SizeUTF8_Internal(font, meme, text, &width, &height, &xstart, &ystart) < 0) || !width) {
         TTF_SetError("Text has zero width");
         return NULL;
     }
@@ -1551,7 +1558,7 @@ SDL_Surface *TTF_RenderUTF8_Shaded(TTF_Font *font,
     return textbuf;
 }
 
-SDL_Surface* TTF_RenderUNICODE_Shaded(TTF_Font* font,
+SDL_Surface* TTF_RenderUNICODE_Shaded(TTF_Font *font, TTF_Font *meme,
                        const Uint16* text,
                        SDL_Color fg,
                        SDL_Color bg)
@@ -1564,7 +1571,7 @@ SDL_Surface* TTF_RenderUNICODE_Shaded(TTF_Font* font,
     utf8 = SDL_stack_alloc(Uint8, UCS2_to_UTF8_len(text));
     if (utf8) {
         UCS2_to_UTF8(text, utf8);
-        surface = TTF_RenderUTF8_Shaded(font, (char *)utf8, fg, bg);
+        surface = TTF_RenderUTF8_Shaded(font, meme, (char *)utf8, fg, bg);
         SDL_stack_free(utf8);
     } else {
         SDL_OutOfMemory();
@@ -1572,7 +1579,7 @@ SDL_Surface* TTF_RenderUNICODE_Shaded(TTF_Font* font,
     return surface;
 }
 
-SDL_Surface* TTF_RenderGlyph_Shaded(TTF_Font* font,
+SDL_Surface* TTF_RenderGlyph_Shaded(TTF_Font *font, TTF_Font *meme,
                      Uint16 ch,
                      SDL_Color fg,
                      SDL_Color bg)
@@ -1583,10 +1590,10 @@ SDL_Surface* TTF_RenderGlyph_Shaded(TTF_Font* font,
     ucs2[0] = ch;
     ucs2[1] = 0;
     UCS2_to_UTF8(ucs2, utf8);
-    return TTF_RenderUTF8_Shaded(font, (char *)utf8, fg, bg);
+    return TTF_RenderUTF8_Shaded(font, meme, (char *)utf8, fg, bg);
 }
 
-SDL_Surface *TTF_RenderText_Blended(TTF_Font *font,
+SDL_Surface *TTF_RenderText_Blended(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg)
 {
     SDL_Surface *surface = NULL;
@@ -1597,7 +1604,7 @@ SDL_Surface *TTF_RenderText_Blended(TTF_Font *font,
     utf8 = SDL_stack_alloc(Uint8, LATIN1_to_UTF8_len(text));
     if (utf8) {
         LATIN1_to_UTF8(text, utf8);
-        surface = TTF_RenderUTF8_Blended(font, (char *)utf8, fg);
+        surface = TTF_RenderUTF8_Blended(font, meme, (char *)utf8, fg);
         SDL_stack_free(utf8);
     } else {
         SDL_OutOfMemory();
@@ -1605,7 +1612,7 @@ SDL_Surface *TTF_RenderText_Blended(TTF_Font *font,
     return surface;
 }
 
-SDL_Surface *TTF_RenderUTF8_Blended(TTF_Font *font,
+SDL_Surface *TTF_RenderUTF8_Blended(TTF_Font *font, TTF_Font *meme,
                 const char *text, SDL_Color fg)
 {
     unsigned int i;
@@ -1627,7 +1634,7 @@ SDL_Surface *TTF_RenderUTF8_Blended(TTF_Font *font,
     TTF_CHECKPOINTER(text, NULL);
 
     /* Get the dimensions of the text surface */
-    if ((TTF_SizeUTF8_Internal(font, text, &width, &height, &xstart, &ystart) < 0) || !width) {
+    if ((TTF_SizeUTF8_Internal(font, meme, text, &width, &height, &xstart, &ystart) < 0) || !width) {
         TTF_SetError("Text has zero width");
         return NULL;
     }
@@ -1709,7 +1716,7 @@ SDL_Surface *TTF_RenderUTF8_Blended(TTF_Font *font,
     return textbuf;
 }
 
-SDL_Surface *TTF_RenderUNICODE_Blended(TTF_Font *font,
+SDL_Surface *TTF_RenderUNICODE_Blended(TTF_Font *font, TTF_Font *meme,
                 const Uint16 *text, SDL_Color fg)
 {
     SDL_Surface *surface = NULL;
@@ -1720,7 +1727,7 @@ SDL_Surface *TTF_RenderUNICODE_Blended(TTF_Font *font,
     utf8 = SDL_stack_alloc(Uint8, UCS2_to_UTF8_len(text));
     if (utf8) {
         UCS2_to_UTF8(text, utf8);
-        surface = TTF_RenderUTF8_Blended(font, (char *)utf8, fg);
+        surface = TTF_RenderUTF8_Blended(font, meme, (char *)utf8, fg);
         SDL_stack_free(utf8);
     } else {
         SDL_OutOfMemory();
@@ -1777,11 +1784,12 @@ SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
     int line, numLines, rowHeight, lineskip;
     char *str, **strLines, **newLines;
     size_t textlen;
+    TTF_Font *curfont;
 
     TTF_CHECKPOINTER(text, NULL);
 
     /* Get the dimensions of the text surface */
-    if ((TTF_SizeUTF8(font, text, &width, &height) < 0) || !width) {
+    if ((TTF_SizeUTF8(font, meme, text, &width, &height) < 0) || !width) {
         TTF_SetError("Text has zero width");
         return NULL;
     }
@@ -1848,7 +1856,7 @@ SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
                 delim = *spot;
                 *spot = '\0';
 
-                TTF_SizeUTF8(font, tok, &w, &h);
+                TTF_SizeUTF8(font, meme, tok, &w, &h);
                 if ((Uint32)w <= wrapLength) {
                     break;
                 } else {
@@ -1918,23 +1926,21 @@ SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
         textlen = SDL_strlen(text);
 
         /* Initialize xstart, ystart */
-        TTF_SizeUTF8_Internal(font, text, &line_width, NULL, &xstart, &ystart);
+        TTF_SizeUTF8_Internal(font, meme, text, &line_width, NULL, &xstart, &ystart);
         while (textlen > 0) {
-            int isMeme = 0;
-
             Uint32 c = UTF8_getch(&text, &textlen);
             if (c == UNICODE_BOM_NATIVE || c == UNICODE_BOM_SWAPPED) {
                 continue;
             }
 
-            isMeme = FT_Get_Char_Index(font->face, c);
-            if (!isMeme == 0)
-                error = Find_Glyph(font, c, CACHED_METRICS|CACHED_PIXMAP);
+            if (!FT_Get_Char_Index(font->face, c) == 0)
+                curfont = font;
             else
-                error = Find_Glyph(meme, c, CACHED_METRICS|CACHED_PIXMAP);
+                curfont = meme;
+            
+            error = Find_Glyph(curfont, c, CACHED_METRICS|CACHED_PIXMAP);
 
             if (error) {
-                isMeme = 0;
                 TTF_SetFTError("Couldn't find glyph", error);
                 SDL_FreeSurface(textbuf);
                 if (strLines) {
@@ -1943,25 +1949,14 @@ SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
                 }
                 return NULL;
             }
-            if (!isMeme == 0)
-                glyph = font->current;
-            else
-                glyph = meme->current;
+            glyph = curfont->current;
             current = &glyph->pixmap;
 
             /* handle kerning */
-            if (!isMeme == 0) {
-                if (font->use_kerning && prev_index && glyph->index) {
-                    FT_Vector delta;
-                    FT_Get_Kerning(font->face, prev_index, glyph->index, ft_kerning_default, &delta);
-                    xstart += delta.x >> 6;
-                }
-            } else {
-                if (meme->use_kerning && prev_index && glyph->index) {
-                    FT_Vector delta;
-                    FT_Get_Kerning(meme->face, prev_index, glyph->index, ft_kerning_default, &delta);
-                    xstart += delta.x >> 6;
-                }
+            if (curfont->use_kerning && prev_index && glyph->index) {
+                FT_Vector delta;
+                FT_Get_Kerning(curfont->face, prev_index, glyph->index, ft_kerning_default, &delta);
+                xstart += delta.x >> 6;
             }
 
             /* workaround: an unbreakable line doesn't render overlapped */
@@ -2023,7 +2018,7 @@ SDL_Surface *TTF_RenderUNICODE_Blended_Wrapped(TTF_Font *font, TTF_Font *meme, c
     return surface;
 }
 
-SDL_Surface *TTF_RenderGlyph_Blended(TTF_Font *font, Uint16 ch, SDL_Color fg)
+SDL_Surface *TTF_RenderGlyph_Blended(TTF_Font *font, TTF_Font *meme, Uint16 ch, SDL_Color fg)
 {
     Uint16 ucs2[2];
     Uint8 utf8[4];
@@ -2031,7 +2026,7 @@ SDL_Surface *TTF_RenderGlyph_Blended(TTF_Font *font, Uint16 ch, SDL_Color fg)
     ucs2[0] = ch;
     ucs2[1] = 0;
     UCS2_to_UTF8(ucs2, utf8);
-    return TTF_RenderUTF8_Blended(font, (char *)utf8, fg);
+    return TTF_RenderUTF8_Blended(font, meme, (char *)utf8, fg);
 }
 
 void TTF_SetFontStyle(TTF_Font* font, int style)

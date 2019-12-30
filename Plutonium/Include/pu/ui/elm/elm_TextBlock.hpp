@@ -33,7 +33,7 @@ namespace pu::ui::elm
             s32 GetTextHeight();
             std::string GetText();
             void SetText(const std::string& Text);
-            void SetFont(render::NativeFont Font);
+            void SetFontSize(s32 FontSize);
             Color GetColor();
             void SetColor(Color Color);
             void OnRender(render::Renderer::Ref &Drawer, s32 X, s32 Y);
@@ -42,9 +42,9 @@ namespace pu::ui::elm
             std::string text;
             s32 x;
             s32 y;
-            render::NativeFont fnt;
-            s32 fsize;
+            render::NativeFont font;
+            render::NativeFont meme;
             Color clr;
-            render::NativeTexture ntex;
+            render::NativeTexture ntex = nullptr;
     };
 }

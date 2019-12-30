@@ -36,11 +36,14 @@ namespace pu::ui::elm
             std::string GetIcon();
             void SetIcon(std::string Icon);
             bool HasIcon();
+            void SetFactor(float Factor);
+            float GetFactor();
         private:
             std::string name;
             Color clr;
-            bool hasicon;
+            bool hasicon = false;
             std::string icon;
+            float factor = 0;
             std::vector<std::function<void()>> cbs;
             std::vector<u64> cbipts;
     };
@@ -100,6 +103,7 @@ namespace pu::ui::elm
             std::function<void()> onselch;
             std::vector<MenuItem::Ref> itms;
             render::NativeFont font;
+            render::NativeFont meme;
             std::vector<render::NativeTexture> loadednames;
             std::vector<render::NativeTexture> loadedicons;
     };

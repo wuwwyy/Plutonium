@@ -5,8 +5,8 @@
 
 namespace pu::ui::render
 {
-    std::unordered_map<u32, std::pair<std::string, NativeFont>> filefonts;
-    std::unordered_map<u32, std::pair<SharedFont, NativeFont>> shfonts;
+    std::unordered_map<u32, std::unordered_map<std::string, NativeFont>> filefonts;
+    std::unordered_map<u32, std::unordered_map<SharedFont, NativeFont>> shfonts;
 
     static SharedFont shfont = SharedFont::Standard;
     static std::string fontpth;
@@ -18,9 +18,10 @@ namespace pu::ui::render
         return tex;
     }
 
-    NativeTexture RenderText(NativeFont Font, const std::string& Text, Color Color)
+    NativeTexture RenderText(NativeFont Font, NativeFont Meme, const std::string& Text, Color Color)
     {
-        NativeSurface txsrf = TTF_RenderUTF8_Blended_Wrapped(Font, LoadSharedFont(SharedFont::NintendoExtended, 25), Text.c_str(), { Color.R, Color.G, Color.B, Color.A }, 1280);
+        printf("RenderText\n");
+        NativeSurface txsrf = TTF_RenderUTF8_Blended_Wrapped(Font, Meme, Text.c_str(), { Color.R, Color.G, Color.B, Color.A }, 1280);
         SDL_SetSurfaceAlphaMod(txsrf, 255);
         return ConvertToTexture(txsrf);
     }
@@ -37,8 +38,14 @@ namespace pu::ui::render
 
     NativeFont LoadSharedFont(SharedFont Type, s32 Size)
     {
-        auto it = shfonts.find(Size);
-        if((it != shfonts.end()) && (it->second.first == Type)) return it->second.second;
+        auto it_size = shfonts.find(Size);
+        if(it_size != shfonts.end()) {
+            auto it_path = it_size->second.find(Type);
+            if (it_path != it_size->second.end()) {
+                return it_path->second;
+            }
+        }
+        printf("loading font\n");
         PlFontData plfont;
         NativeFont font = NULL;
         SDL_RWops *mem = NULL;
@@ -48,16 +55,38 @@ namespace pu::ui::render
             mem = SDL_RWFromMem(plfont.address, plfont.size);
             font = TTF_OpenFontRW(mem, 1, Size);
         }
-        if(font != NULL) shfonts.insert(std::make_pair(Size, std::make_pair(Type, font)));
+        if(font != NULL) {
+            if(it_size == shfonts.end()) {
+                std::unordered_map<SharedFont, NativeFont> typeMap;
+                typeMap.insert(std::make_pair(Type, font));
+                shfonts.insert(std::make_pair(Size, typeMap));
+            } else {
+                it_size->second.insert(std::make_pair(Type, font));
+            }
+        }
         return font;
     }
 
     NativeFont LoadFont(const std::string& Path, s32 Size)
     {
-        auto it = filefonts.find(Size);
-        if((it != filefonts.end()) && (it->second.first == Path)) return it->second.second;
+        auto it_size = filefonts.find(Size);
+        if(it_size != filefonts.end()) {
+            auto it_path = it_size->second.find(Path);
+            if (it_path != it_size->second.end()) {
+                return it_path->second;
+            }
+        }
+        printf("loading font\n");
         auto font = TTF_OpenFont(Path.c_str(), Size);
-        if(font != NULL) filefonts.insert(std::make_pair(Size, std::make_pair(Path, font)));
+        if(font != NULL) {
+            if(it_size == filefonts.end()) {
+                std::unordered_map<std::string, NativeFont> pathMap;
+                pathMap.insert(std::make_pair(Path, font));
+                filefonts.insert(std::make_pair(Size, pathMap));
+            } else {
+                it_size->second.insert(std::make_pair(Path, font));
+            }
+        }
         return font;
     }
 
@@ -73,12 +102,14 @@ namespace pu::ui::render
 
     NativeFont LoadDefaultFont(s32 Size)
     {
+        printf("LoadDefaultFont...\n");
         if(!fontpth.empty()) return LoadFont(fontpth, Size);
         return LoadSharedFont(shfont, Size);
     }
 
     s32 GetTextureWidth(NativeTexture Texture)
     {
+        printf("GetTextureWidth...\n");
         int w = 0;
         SDL_QueryTexture(Texture, NULL, NULL, &w, NULL);
         return (s32)w;
@@ -86,6 +117,7 @@ namespace pu::ui::render
 
     s32 GetTextureHeight(NativeTexture Texture)
     {
+        printf("GetTextureHeight...\n");
         int h = 0;
         SDL_QueryTexture(Texture, NULL, NULL, NULL, &h);
         return (s32)h;
@@ -93,10 +125,9 @@ namespace pu::ui::render
 
     #define PROCESS_TMP_STR { \
         int tmpw = 0; \
-        TTF_SizeUTF8(Font, tmpstr.c_str(), &tmpw, NULL); \
-        if(tmpw > tw) tw = tmpw; \
         int tmph = 0; \
-        TTF_SizeUTF8(Font, tmpstr.c_str(), NULL, &tmph); \
+        TTF_SizeUTF8(Font, Meme, tmpstr.c_str(), &tmpw, &tmph); \
+        if(tmpw > tw) tw = tmpw; \
         th += tmph; \
         tmpstr = ""; \
     }
@@ -113,14 +144,14 @@ namespace pu::ui::render
         if(!tmpstr.empty()) \
         PROCESS_TMP_STR
 
-    s32 GetTextWidth(NativeFont Font, const std::string& Text)
+    s32 GetTextWidth(NativeFont Font, NativeFont Meme, const std::string& Text)
     {
         TEXT_SIZE_BASE
 
         return (s32)tw;
     }
 
-    s32 GetTextHeight(NativeFont Font, const std::string& Text)
+    s32 GetTextHeight(NativeFont Font, NativeFont Meme, const std::string& Text)
     {
         TEXT_SIZE_BASE
 
@@ -135,12 +166,14 @@ namespace pu::ui::render
 
     void DeleteFont(NativeFont Font)
     {
+        printf("DeleteFont...\n");
         TTF_CloseFont(Font);
         Font = NULL;
     }
 
     void DeleteTexture(NativeTexture Texture)
     {
+        printf("DeleteTexture...\n");
         SDL_DestroyTexture(Texture);
         Texture = NULL;
     }

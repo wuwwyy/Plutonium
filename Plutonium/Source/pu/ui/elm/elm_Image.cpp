@@ -2,10 +2,10 @@
 
 namespace pu::ui::elm
 {
-    Image::Image(s32 X, s32 Y, const std::string& Image) : Element::Element()
+    Image::Image(s32 X, s32 Y, const std::string& Image)
+        : Element::Element(), x(X), y(Y)
     {
-        this->x = X;
-        this->y = Y;
+        printf("loading image: %s\n", Image.c_str());
         this->ntex = NULL;
         this->rendopts = render::NativeTextureRenderOptions::Default;
         this->SetImage(Image);
@@ -13,11 +13,8 @@ namespace pu::ui::elm
 
     Image::~Image()
     {
-        if(this->ntex != NULL)
-        {
+        if(this->ntex != nullptr)
             render::DeleteTexture(this->ntex);
-            this->ntex = NULL;
-        }
     }
 
     s32 Image::GetX()
@@ -72,8 +69,7 @@ namespace pu::ui::elm
 
     void Image::SetImage(const std::string& Image)
     {
-        if(this->ntex != NULL) render::DeleteTexture(this->ntex);
-        this->ntex = NULL;
+        if(this->ntex != nullptr) render::DeleteTexture(this->ntex);
         std::ifstream ifs(Image);
         bool ok = ifs.good();
         ifs.close();
@@ -87,11 +83,10 @@ namespace pu::ui::elm
 
     void Image::SetImage(const std::vector<u8>& RawImage)
     {
-        if(this->ntex != NULL) render::DeleteTexture(this->ntex);
-        this->ntex = NULL;
-            this->ntex = render::LoadImage(RawImage);
-            this->rendopts.Width = render::GetTextureWidth(this->ntex);
-            this->rendopts.Height = render::GetTextureHeight(this->ntex);
+        if(this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        this->ntex = render::LoadImage(RawImage);
+        this->rendopts.Width = render::GetTextureWidth(this->ntex);
+        this->rendopts.Height = render::GetTextureHeight(this->ntex);
     }
 
     bool Image::IsImageValid()
