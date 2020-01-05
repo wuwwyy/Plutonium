@@ -83,7 +83,7 @@ namespace pu::ui::elm
         return this->factor;
     }
 
-    Menu::Menu(s32 X, s32 Y, s32 Width, Color OptionColor, s32 ItemSize, s32 ItemsToShow)
+    Menu::Menu(s32 X, s32 Y, s32 Width, Color OptionColor, s32 ItemSize, s32 ItemsToShow, s32 fontSize)
         : Element::Element(), x(X), y(Y), w(Width), clr(OptionColor), isize(ItemSize), ishow(ItemsToShow)
     {
         printf("loading menu: %d:%d\n", X, Y);
@@ -98,8 +98,8 @@ namespace pu::ui::elm
         this->dtouch = false;
         this->fcs = { 40, 40, 40, 255 };
         this->basestatus = 0;
-        this->font = render::LoadDefaultFont(25);
-        this->meme = render::LoadSharedFont(render::SharedFont::NintendoExtended, 25);
+        this->font = render::LoadDefaultFont(fontSize);
+        this->meme = render::LoadSharedFont(render::SharedFont::NintendoExtended, fontSize);
     }
 
     s32 Menu::GetX()
@@ -285,13 +285,15 @@ namespace pu::ui::elm
                 }
                 else Drawer->RenderRectangleFill(this->clr, cx, cy, cw, ch);
                 auto itm = this->itms[i];
-                s32 xh = render::GetTextHeight(this->font, this->meme, itm->GetName());
+                s32 xh = render::GetTextureHeight(curname);
                 s32 tx = (cx + 25);
                 s32 ty = ((ch - xh) / 2) + cy;
                 if(itm->HasIcon())
                 {
-                    if (itm->GetFactor() == 0)
-                        itm->SetFactor((float)render::GetTextureHeight(curicon)/(float)render::GetTextureWidth(curicon));
+                    if (itm->GetFactor() == 0) {
+                        auto [w,h] = render::GetTextureSize(curicon);
+                        itm->SetFactor((float)h/w);
+                    }
                     float factor = itm->GetFactor();
                     s32 icw = (this->isize - 10);
                     s32 ich = icw;
@@ -384,7 +386,7 @@ namespace pu::ui::elm
         }
         else
         {
-            if((Down & KEY_DDOWN) || (Down & KEY_LSTICK_DOWN) || (Held & KEY_RSTICK_DOWN))
+            if((Down & KEY_DOWN) || (Held & KEY_RSTICK_DOWN))
             {
                 bool move = true;
                 if(Held & KEY_RSTICK_DOWN)
@@ -435,7 +437,7 @@ namespace pu::ui::elm
                     }
                 }
             }
-            else if((Down & KEY_DUP) || (Down & KEY_LSTICK_UP) || (Held & KEY_RSTICK_UP))
+            else if((Down & KEY_UP) || (Held & KEY_RSTICK_UP))
             {
                 bool move = true;
                 if(Held & KEY_RSTICK_UP)

@@ -51,7 +51,7 @@ namespace pu::ui::elm
     class Menu : public Element
     {
         public:
-            Menu(s32 X, s32 Y, s32 Width, Color OptionColor, s32 ItemSize, s32 ItemsToShow);
+            Menu(s32 X, s32 Y, s32 Width, Color OptionColor, s32 ItemSize, s32 ItemsToShow, s32 fontSize = 25);
             PU_SMART_CTOR(Menu)
 
             s32 GetX();

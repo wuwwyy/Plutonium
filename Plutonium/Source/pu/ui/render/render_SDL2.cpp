@@ -45,7 +45,7 @@ namespace pu::ui::render
                 return it_path->second;
             }
         }
-        printf("loading font\n");
+        printf("loading font from pl...\n");
         PlFontData plfont;
         NativeFont font = NULL;
         SDL_RWops *mem = NULL;
@@ -76,7 +76,7 @@ namespace pu::ui::render
                 return it_path->second;
             }
         }
-        printf("loading font\n");
+        printf("loading font by path...\n");
         auto font = TTF_OpenFont(Path.c_str(), Size);
         if(font != NULL) {
             if(it_size == filefonts.end()) {
@@ -90,7 +90,7 @@ namespace pu::ui::render
         return font;
     }
 
-    void SetDefaultFont(std::string Path)
+    void SetDefaultFont(const std::string& Path)
     {
         fontpth = Path;
     }
@@ -123,39 +123,12 @@ namespace pu::ui::render
         return (s32)h;
     }
 
-    #define PROCESS_TMP_STR { \
-        int tmpw = 0; \
-        int tmph = 0; \
-        TTF_SizeUTF8(Font, Meme, tmpstr.c_str(), &tmpw, &tmph); \
-        if(tmpw > tw) tw = tmpw; \
-        th += tmph; \
-        tmpstr = ""; \
-    }
-
-    #define TEXT_SIZE_BASE std::string tmpstr; \
-        int tw = 0; \
-        int th = 0; \
-        for(auto &ch: Text) \
-        { \
-            if(ch == '\n') \
-            PROCESS_TMP_STR \
-            else tmpstr += ch; \
-        } \
-        if(!tmpstr.empty()) \
-        PROCESS_TMP_STR
-
-    s32 GetTextWidth(NativeFont Font, NativeFont Meme, const std::string& Text)
+    std::pair<s32,s32> GetTextureSize(NativeTexture Texture)
     {
-        TEXT_SIZE_BASE
-
-        return (s32)tw;
-    }
-
-    s32 GetTextHeight(NativeFont Font, NativeFont Meme, const std::string& Text)
-    {
-        TEXT_SIZE_BASE
-
-        return (s32)th;
+        printf("GetTextureSize...\n");
+        int w, h;
+        SDL_QueryTexture(Texture, NULL, NULL, &w, &h);
+        return std::make_pair(w, h);
     }
 
     void SetAlphaValue(NativeTexture Texture, u8 Alpha)

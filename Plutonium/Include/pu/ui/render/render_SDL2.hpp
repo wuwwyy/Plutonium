@@ -50,8 +50,7 @@ namespace pu::ui::render
     NativeFont LoadDefaultFont(s32 Size);
     s32 GetTextureWidth(NativeTexture Texture);
     s32 GetTextureHeight(NativeTexture Texture);
-    s32 GetTextWidth(NativeFont Font, NativeFont Meme, const std::string& Text);
-    s32 GetTextHeight(NativeFont Font, NativeFont Meme, const std::string& Text);
+    std::pair<s32,s32> GetTextureSize(NativeTexture Texture);
     void SetAlphaValue(NativeTexture Texture, u8 Alpha);
     void DeleteFont(NativeFont Font);
     void DeleteTexture(NativeTexture Texture);

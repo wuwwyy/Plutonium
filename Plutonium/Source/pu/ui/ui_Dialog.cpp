@@ -87,24 +87,24 @@ namespace pu::ui
         s32 dw = (20 * (this->opts.size() - 1)) + 250;
         for(s32 i = 0; i < this->opts.size(); i++)
         {
-            s32 tw = render::GetTextWidth(this->optionsFont, this->optionsFontEx, this->sopts[i]);
+            s32 tw = render::GetTextureWidth(this->opts[i]);
             dw += tw + 20;
         }
         if(dw > 1280) dw = 1280;
         s32 icm = 30;
         s32 elemh = 60;
-        s32 tdw = render::GetTextWidth(this->contentFont, this->contentFontEx, this->scnt) + 90;
+        s32 tdw = render::GetTextureWidth(this->cnt) + 90;
         if(tdw > dw) dw = tdw;
-        tdw = render::GetTextWidth(this->titleFont, this->titleFontEx, this->stitle) + 90;
+        tdw = render::GetTextureWidth(this->title) + 90;
         if(tdw > dw) dw = tdw;
-        s32 ely = render::GetTextHeight(this->titleFont, this->titleFontEx, this->stitle) + render::GetTextHeight(this->contentFont, this->contentFontEx, this->scnt) + 140;
+        s32 ely = render::GetTextureHeight(this->title) + render::GetTextureHeight(this->cnt) + 140;
         if(this->hicon)
         {
             s32 tely = render::GetTextureHeight(this->icon) + icm + 25;
             if(tely > ely) ely = tely;
-            tdw = render::GetTextWidth(this->contentFont, this->contentFontEx, this->scnt) + 90 + render::GetTextureWidth(this->icon) + 20;
+            tdw = render::GetTextureWidth(this->cnt) + 90 + render::GetTextureWidth(this->icon) + 20;
             if(tdw > dw) dw = tdw;
-            tdw = render::GetTextWidth(this->titleFont, this->titleFontEx, this->stitle) + 90 + render::GetTextureWidth(this->icon) + 20;
+            tdw = render::GetTextureWidth(this->title) + 90 + render::GetTextureWidth(this->icon) + 20;
             if(tdw > dw) dw = tdw;
         }
         if(dw > 1280) dw = 1280;
@@ -204,8 +204,7 @@ namespace pu::ui
                 for(s32 i = 0; i < this->opts.size(); i++)
                 {
                     const std::string txt = this->sopts[i];
-                    s32 tw = render::GetTextWidth(this->optionsFont, this->optionsFontEx, txt);
-                    s32 th = render::GetTextHeight(this->optionsFont, this->optionsFontEx, txt);
+                    auto [tw,th] = render::GetTextureSize(this->opts[i]);
                     s32 tx = elx + ((elemw - tw) / 2) + ((elemw + 20) * i);
                     s32 ty = ely + ((elemh - th) / 2);
                     s32 rx = elx + ((elemw + 20) * i);

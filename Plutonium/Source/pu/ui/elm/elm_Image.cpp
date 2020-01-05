@@ -76,8 +76,9 @@ namespace pu::ui::elm
         if(ok)    
         {
             this->ntex = render::LoadImage(Image);
-            this->rendopts.Width = render::GetTextureWidth(this->ntex);
-            this->rendopts.Height = render::GetTextureHeight(this->ntex);
+            auto [w,h] = render::GetTextureSize(this->ntex);
+            this->rendopts.Width = w;
+            this->rendopts.Height = h;
         }
     }
 
@@ -85,8 +86,9 @@ namespace pu::ui::elm
     {
         if(this->ntex != nullptr) render::DeleteTexture(this->ntex);
         this->ntex = render::LoadImage(RawImage);
-        this->rendopts.Width = render::GetTextureWidth(this->ntex);
-        this->rendopts.Height = render::GetTextureHeight(this->ntex);
+        auto [w,h] = render::GetTextureSize(this->ntex);
+        this->rendopts.Width = w;
+        this->rendopts.Height = h;
     }
 
     bool Image::IsImageValid()

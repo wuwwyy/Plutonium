@@ -51,12 +51,12 @@ namespace pu::ui::elm
 
     s32 TextBlock::GetTextWidth()
     {
-        return render::GetTextWidth(this->font, this->meme, this->text);
+        return render::GetTextureWidth(this->ntex);
     }
 
     s32 TextBlock::GetTextHeight()
     {
-        return render::GetTextHeight(this->font, this->meme, this->text);
+        return render::GetTextureHeight(this->ntex);
     }
 
     std::string TextBlock::GetText()

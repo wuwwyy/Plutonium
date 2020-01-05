@@ -1303,6 +1303,7 @@ SDL_Surface *TTF_RenderUTF8_Solid(TTF_Font *font, TTF_Font *meme,
     FT_Error error;
     FT_UInt prev_index = 0;
     size_t textlen;
+    TTF_Font *curfont;
 
     TTF_CHECKPOINTER(text, NULL);
 
@@ -1337,19 +1338,24 @@ SDL_Surface *TTF_RenderUTF8_Solid(TTF_Font *font, TTF_Font *meme,
             continue;
         }
 
-        error = Find_Glyph(font, c, CACHED_METRICS|CACHED_BITMAP);
+        if (!FT_Get_Char_Index(font->face, c) == 0)
+            curfont = font;
+        else
+            curfont = meme;
+
+        error = Find_Glyph(curfont, c, CACHED_METRICS|CACHED_BITMAP);
         if (error) {
             TTF_SetFTError("Couldn't find glyph", error);
             SDL_FreeSurface(textbuf);
             return NULL;
         }
-        glyph = font->current;
+        glyph = curfont->current;
         current = &glyph->bitmap;
 
         /* handle kerning */
-        if (font->use_kerning && prev_index && glyph->index) {
+        if (curfont->use_kerning && prev_index && glyph->index) {
             FT_Vector delta;
-            FT_Get_Kerning(font->face, prev_index, glyph->index, ft_kerning_default, &delta);
+            FT_Get_Kerning(curfont->face, prev_index, glyph->index, ft_kerning_default, &delta);
             xstart += delta.x >> 6;
         }
 
@@ -1453,6 +1459,7 @@ SDL_Surface *TTF_RenderUTF8_Shaded(TTF_Font *font, TTF_Font *meme,
     FT_Error error;
     FT_UInt prev_index = 0;
     size_t textlen;
+    TTF_Font *curfont;
     Uint8 bg_alpha;
 
     TTF_CHECKPOINTER(text, NULL);
@@ -1514,19 +1521,24 @@ SDL_Surface *TTF_RenderUTF8_Shaded(TTF_Font *font, TTF_Font *meme,
             continue;
         }
 
-        error = Find_Glyph(font, c, CACHED_METRICS|CACHED_PIXMAP);
+        if (!FT_Get_Char_Index(font->face, c) == 0)
+            curfont = font;
+        else
+            curfont = meme;
+
+        error = Find_Glyph(curfont, c, CACHED_METRICS|CACHED_PIXMAP);
         if (error) {
             TTF_SetFTError("Couldn't find glyph", error);
             SDL_FreeSurface(textbuf);
             return NULL;
         }
-        glyph = font->current;
+        glyph = curfont->current;
         current = &glyph->pixmap;
 
         /* handle kerning */
-        if (font->use_kerning && prev_index && glyph->index) {
+        if (curfont->use_kerning && prev_index && glyph->index) {
             FT_Vector delta;
-            FT_Get_Kerning(font->face, prev_index, glyph->index, ft_kerning_default, &delta);
+            FT_Get_Kerning(curfont->face, prev_index, glyph->index, ft_kerning_default, &delta);
             xstart += delta.x >> 6;
         }
 
@@ -1630,6 +1642,7 @@ SDL_Surface *TTF_RenderUTF8_Blended(TTF_Font *font, TTF_Font *meme,
     FT_Error error;
     FT_UInt prev_index = 0;
     size_t textlen;
+    TTF_Font *curfont;
 
     TTF_CHECKPOINTER(text, NULL);
 
@@ -1671,19 +1684,24 @@ SDL_Surface *TTF_RenderUTF8_Blended(TTF_Font *font, TTF_Font *meme,
             continue;
         }
 
-        error = Find_Glyph(font, c, CACHED_METRICS|CACHED_PIXMAP);
+        if (!FT_Get_Char_Index(font->face, c) == 0)
+            curfont = font;
+        else
+            curfont = meme;
+
+        error = Find_Glyph(curfont, c, CACHED_METRICS|CACHED_PIXMAP);
         if (error) {
             TTF_SetFTError("Couldn't find glyph", error);
             SDL_FreeSurface(textbuf);
             return NULL;
         }
-        glyph = font->current;
+        glyph = curfont->current;
         current = &glyph->pixmap;
 
         /* handle kerning */
-        if (font->use_kerning && prev_index && glyph->index) {
+        if (curfont->use_kerning && prev_index && glyph->index) {
             FT_Vector delta;
-            FT_Get_Kerning(font->face, prev_index, glyph->index, ft_kerning_default, &delta);
+            FT_Get_Kerning(curfont->face, prev_index, glyph->index, ft_kerning_default, &delta);
             xstart += delta.x >> 6;
         }
 
@@ -1771,6 +1789,7 @@ SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
     unsigned int i;
     int xstart, ystart;
     int width, height;
+    int max_width;
     SDL_Surface *textbuf;
     Uint8 alpha;
     Uint8 alpha_table[256];
@@ -1794,6 +1813,7 @@ SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
         return NULL;
     }
 
+    max_width = 0;
     numLines = 1;
     str = NULL;
     strLines = NULL;
@@ -1858,6 +1878,8 @@ SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
 
                 TTF_SizeUTF8(font, meme, tok, &w, &h);
                 if ((Uint32)w <= wrapLength) {
+                    if (w > max_width)
+                        max_width = w;
                     break;
                 } else {
                     /* Back up and try again... */
@@ -1879,7 +1901,7 @@ SDL_Surface *TTF_RenderUTF8_Blended_Wrapped(TTF_Font *font, TTF_Font *meme,
     lineskip = TTF_FontLineSkip(font);
     rowHeight = SDL_max(height, lineskip);
 
-    width = (numLines > 1) ? wrapLength : width;
+    width = (numLines > 1) ? max_width : width;
 
     /* Don't go above wrapLength if you have only 1 line which hasn't been cut */
     width  = SDL_min((int)wrapLength, width);
