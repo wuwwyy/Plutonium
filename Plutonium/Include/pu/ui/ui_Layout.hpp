@@ -30,7 +30,8 @@ namespace pu::ui
             void AddThread(std::function<void()> Callback);
             std::vector<std::function<void()>> GetAllThreads();
             void SetBackgroundImage(const std::string& Path);
-            void SetBackgroundImage(const std::vector<u8>& RawImage);
+            void SetBackgroundJpegImage(void* JpegBuffer, s32 size);
+            void SetBackgroundRgbImage(void* RgbBuffer, u64 width, u64 height, u8 depth = 4);
             void SetBackgroundColor(Color Color);
             void SimulateTouch(Touch Custom);
             Touch GetSimulatedTouch();

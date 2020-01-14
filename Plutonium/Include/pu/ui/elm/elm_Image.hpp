@@ -20,6 +20,8 @@ namespace pu::ui::elm
     {
         public:
             Image(s32 X, s32 Y, const std::string& Image);
+            Image(s32 X, s32 Y, void* jpegbuffer, s32 size);
+            Image(s32 X, s32 Y, void* rgbBuffer, u64 width, u64 height, u8 depth);
             PU_SMART_CTOR(Image)
             ~Image();
 
@@ -34,7 +36,8 @@ namespace pu::ui::elm
             float GetRotation();
             void SetRotation(float Angle);
             void SetImage(const std::string& Image);
-            void SetImage(const std::vector<u8>& RawImage);
+            void SetJpegImage(void* buffer, s32 size);
+            void SetRGBImage(void* buffer, u64 width, u64 height, u8 depth = 4);
             bool IsImageValid();
             void OnRender(render::Renderer::Ref &Drawer, s32 X, s32 Y);
             void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos);

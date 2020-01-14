@@ -42,21 +42,27 @@ namespace pu::ui
 
     void Layout::SetBackgroundImage(const std::string& Path)
     {
-        if(this->overbgtex != nullptr) render::DeleteTexture(this->overbgtex);
+        render::DeleteTexture(this->overbgtex);
         this->hasimage = true;
         this->overbgtex = render::LoadImage(Path);
     }
 
-    void Layout::SetBackgroundImage(const std::vector<u8>& RawImage)
+    void Layout::SetBackgroundJpegImage(void* JpegBuffer, s32 size)
     {
-        if(this->overbgtex != nullptr) render::DeleteTexture(this->overbgtex);
+        render::DeleteTexture(this->overbgtex);
         this->hasimage = true;
-        this->overbgtex = render::LoadImage(RawImage);
+        this->overbgtex = render::LoadJpegImage(JpegBuffer, size);
+    }
+
+    void Layout::SetBackgroundRgbImage(void* RgbBuffer, u64 width, u64 height, u8 depth) {
+        render::DeleteTexture(this->overbgtex);
+        this->hasimage = true;
+        this->overbgtex = render::LoadRgbImage(RgbBuffer, width, height, depth);
     }
 
     void Layout::SetBackgroundColor(Color Color)
     {
-        if(this->overbgtex != nullptr) render::DeleteTexture(this->overbgtex);
+        render::DeleteTexture(this->overbgtex);
         this->hasimage = false;
         this->overbgcolor = Color;
     }

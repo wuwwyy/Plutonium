@@ -42,7 +42,8 @@ namespace pu::ui::render
     NativeTexture ConvertToTexture(NativeSurface Surface);
     NativeTexture RenderText(NativeFont Font, NativeFont Meme, const std::string& Text, Color Color);
     NativeTexture LoadImage(const std::string& Path);
-    NativeTexture LoadImage(const std::vector<u8>& Image);
+    NativeTexture LoadJpegImage(void* buffer, s32 size);
+    NativeTexture LoadRgbImage(void* buffer, u64 width, u64 height, u8 depth);
     NativeFont LoadSharedFont(SharedFont Type, s32 Size);
     NativeFont LoadFont(const std::string& Path, s32 Size);
     void SetDefaultFont(const std::string& Path);
@@ -52,6 +53,6 @@ namespace pu::ui::render
     s32 GetTextureHeight(NativeTexture Texture);
     std::pair<s32,s32> GetTextureSize(NativeTexture Texture);
     void SetAlphaValue(NativeTexture Texture, u8 Alpha);
-    void DeleteFont(NativeFont Font);
-    void DeleteTexture(NativeTexture Texture);
+    void DeleteFont(NativeFont& Font);
+    void DeleteTexture(NativeTexture& Texture);
 }
