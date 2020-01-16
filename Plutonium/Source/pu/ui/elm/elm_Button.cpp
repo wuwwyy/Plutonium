@@ -13,8 +13,7 @@ namespace pu::ui::elm
 
     Button::~Button()
     {
-        if(this->ntex != nullptr)
-            render::DeleteTexture(this->ntex);
+        render::DeleteTexture(this->ntex);
     }
 
     s32 Button::GetX()
@@ -65,7 +64,7 @@ namespace pu::ui::elm
     void Button::SetContent(const std::string& Content)
     {
         this->cnt = Content;
-        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        render::DeleteTexture(this->ntex);
         this->ntex = render::RenderText(this->font, this->meme, Content, this->clr);
     }
 
@@ -77,7 +76,7 @@ namespace pu::ui::elm
     void Button::SetColor(Color Color)
     {
         this->clr = Color;
-        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        render::DeleteTexture(this->ntex);
         this->ntex = render::RenderText(this->font, this->meme, this->cnt, Color);
     }
 
@@ -85,7 +84,7 @@ namespace pu::ui::elm
     {
         this->font = render::LoadDefaultFont(FontSize);
         this->meme = render::LoadSharedFont(render::SharedFont::NintendoExtended, FontSize);
-        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        render::DeleteTexture(this->ntex);
         this->ntex = render::RenderText(this->font, this->meme, this->cnt, this->clr);
     }
 

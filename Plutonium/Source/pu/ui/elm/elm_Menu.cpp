@@ -86,7 +86,6 @@ namespace pu::ui::elm
     Menu::Menu(s32 X, s32 Y, s32 Width, Color OptionColor, s32 ItemSize, s32 ItemsToShow, s32 fontSize)
         : Element::Element(), x(X), y(Y), w(Width), clr(OptionColor), isize(ItemSize), ishow(ItemsToShow)
     {
-        printf("loading menu: %d:%d\n", X, Y);
         this->scb = { 110, 110, 110, 255 };
         this->previsel = 0;
         this->isel = 0;

@@ -44,14 +44,14 @@ namespace pu::ui
             render::NativeFont optionsFontEx;
             std::string stitle;
             std::string scnt;
-            render::NativeTexture title;
-            render::NativeTexture cnt;
+            render::NativeTexture title = nullptr;
+            render::NativeTexture cnt = nullptr;
             std::vector<std::string> sopts;
             std::vector<render::NativeTexture> opts;
             s32 osel;
             bool cancel;
             bool hicon;
-            render::NativeTexture icon;
+            render::NativeTexture icon = nullptr;
             s32 prevosel;
             s32 pselfact;
             s32 selfact;

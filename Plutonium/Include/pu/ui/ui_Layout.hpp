@@ -42,7 +42,7 @@ namespace pu::ui
             bool hasimage;
             Color overbgcolor;
             Touch simtouch;
-            render::NativeTexture overbgtex;
+            render::NativeTexture overbgtex = nullptr;
             std::function<void(u64, u64, u64, Touch)> onipt;
             std::vector<std::function<void()>> thds;
     };

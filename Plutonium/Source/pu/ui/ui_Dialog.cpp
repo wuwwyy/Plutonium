@@ -25,23 +25,10 @@ namespace pu::ui
     }
 
     Dialog::~Dialog()
-    {
-        if(this->title != NULL)
-        {
-            render::DeleteTexture(this->title);
-            this->title = NULL;
-        }
-        if(this->cnt != NULL)
-        {
-            render::DeleteTexture(this->cnt);
-            this->cnt = NULL;
-        }
-        if(this->hicon && (this->icon != NULL))
-        {
-            render::DeleteTexture(this->icon);
-            this->icon = NULL;
-            this->hicon = false;
-        }
+{
+        render::DeleteTexture(this->title);
+        render::DeleteTexture(this->cnt);
+        render::DeleteTexture(this->icon);
         for(auto &opt: this->opts) render::DeleteTexture(opt);
     }
 
@@ -70,7 +57,7 @@ namespace pu::ui
 
     void Dialog::SetIcon(const std::string& Icon)
     {
-        if(this->hicon) render::DeleteTexture(this->icon);
+        render::DeleteTexture(this->icon);
         this->icon = render::LoadImage(Icon);
         this->hicon = true;
     }

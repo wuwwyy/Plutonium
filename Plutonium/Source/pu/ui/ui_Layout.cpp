@@ -12,7 +12,7 @@ namespace pu::ui
 
     Layout::~Layout()
     {
-        if(this->overbgtex != nullptr) render::DeleteTexture(this->overbgtex);
+        render::DeleteTexture(this->overbgtex);
     }
 
     bool Layout::HasChilds()

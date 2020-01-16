@@ -23,7 +23,7 @@ namespace pu::ui::elm
     {
         render::DeleteTexture(this->ntex);
         this->rendopts = render::NativeTextureRenderOptions::Default;
-        this->SetRGBImage(rgbBuffer, width, height, depth);
+        this->SetRgbImage(rgbBuffer, width, height, depth);
     }
 
     Image::~Image()
@@ -108,7 +108,7 @@ namespace pu::ui::elm
         this->rendopts.Height = h;
     }
 
-    void Image::SetRGBImage(void* buffer, u64 width, u64 height, u8 depth)
+    void Image::SetRgbImage(void* buffer, u64 width, u64 height, u8 depth)
     {
         render::DeleteTexture(this->ntex);
         this->ntex = render::LoadRgbImage(buffer, width, height, depth);

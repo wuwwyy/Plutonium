@@ -45,13 +45,13 @@ namespace pu::ui::elm
             s32 y;
             s32 w;
             s32 h;
-            render::NativeFont font;
-            render::NativeFont meme;
+            render::NativeFont font = nullptr;
+            render::NativeFont meme = nullptr;
             Color clr;
             std::string cnt;
             std::function<void()> clickcb;
             bool hover;
             s32 hoverfact;
-            render::NativeTexture ntex;
+            render::NativeTexture ntex = nullptr;
     };
 }

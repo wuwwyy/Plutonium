@@ -25,15 +25,15 @@ INCLUDES	:=	Include Include/pu Include/pu/audio Include/pu/ui Include/pu/ui/elm 
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIC -ftls-model=local-exec
 
-CFLAGS	:=	-g -w -D__SWITCH__ \
+CFLAGS	:=	-g -D__SWITCH__ \
 			-ffunction-sections \
 			-fdata-sections \
 			$(ARCH) \
 
 CFLAGS	+=	$(INCLUDE)
-CFLAGS  +=  `freetype-config --cflags`
+CFLAGS  +=  `freetype-config --cflags` -Wall
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17 -Wall
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=${DEVKITPRO}/libnx/switch.specs -g $(ARCH) -Wl,-r,-Map,$(notdir $*.map)

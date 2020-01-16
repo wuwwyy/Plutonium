@@ -12,8 +12,7 @@ namespace pu::ui::elm
 
     Toggle::~Toggle()
     {
-        if(this->ntex != nullptr)
-            render::DeleteTexture(this->ntex);
+        render::DeleteTexture(this->ntex);
     }
 
     s32 Toggle::GetX()
@@ -54,7 +53,7 @@ namespace pu::ui::elm
     void Toggle::SetContent(const std::string& Content)
     {
         this->cnt = Content;
-        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        render::DeleteTexture(this->ntex);
         this->ntex = render::RenderText(this->font, this->meme, Content, this->clr);
     }
 
@@ -62,7 +61,7 @@ namespace pu::ui::elm
     {
         this->font = render::LoadDefaultFont(FontSize);
         this->meme = render::LoadSharedFont(render::SharedFont::NintendoExtended, FontSize);
-        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        render::DeleteTexture(this->ntex);
         this->ntex = render::RenderText(this->font, this->meme, this->cnt, this->clr);
     }
 
@@ -74,7 +73,7 @@ namespace pu::ui::elm
     void Toggle::SetColor(Color Color)
     {
         this->clr = Color;
-        if (this->ntex != nullptr) render::DeleteTexture(this->ntex);
+        render::DeleteTexture(this->ntex);
         this->ntex = render::RenderText(this->font, this->meme, this->cnt, Color);
     }
 

@@ -5,7 +5,6 @@ namespace pu::ui::elm
     Rectangle::Rectangle(s32 X, s32 Y, s32 Width, s32 Height, Color RecColor, s32 BorderRadius)
         : Element::Element(), x(X), y(Y), w(Width), h(Height), clr(RecColor), borderr(BorderRadius)
     {
-        printf("loading TextBlock: @%d:%d, %d*%d\n", X, Y, Width, Height);
     }
 
     s32 Rectangle::GetX()
