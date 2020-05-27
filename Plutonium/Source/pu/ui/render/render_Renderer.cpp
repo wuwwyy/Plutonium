@@ -36,7 +36,7 @@ namespace pu::ui::render
             if(this->initopts.InitPL)
             {
 #ifdef __SWITCH__
-                Result rc = plInitialize();
+                Result rc = plInitialize(PlServiceType_User);
                 this->okpl = R_SUCCEEDED(rc);
 #endif
             }
