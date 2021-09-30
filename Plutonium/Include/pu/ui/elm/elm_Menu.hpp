@@ -29,7 +29,7 @@ namespace pu::ui::elm
             void SetName(const std::string& Name);
             Color GetColor();
             void SetColor(Color Color);
-            void AddOnClick(std::function<void()> Callback, u64 Key = KEY_A);
+            void AddOnClick(std::function<void()> Callback, u64 Key = HidNpadButton_A);
             s32 GetCallbackCount();
             std::function<void()> GetCallback(s32 Index);
             u64 GetCallbackKey(s32 Index);

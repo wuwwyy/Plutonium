@@ -385,10 +385,10 @@ namespace pu::ui::elm
         }
         else
         {
-            if((Down & KEY_DOWN) || (Held & KEY_RSTICK_DOWN))
+            if(Down & HidNpadButton_AnyDown)
             {
                 bool move = true;
-                if(Held & KEY_RSTICK_DOWN)
+                if(Held & HidNpadButton_StickRDown)
                 {
                     move = false;
                     if(basestatus == 0)
@@ -436,10 +436,10 @@ namespace pu::ui::elm
                     }
                 }
             }
-            else if((Down & KEY_UP) || (Held & KEY_RSTICK_UP))
+            else if(Down & HidNpadButton_AnyUp)
             {
                 bool move = true;
-                if(Held & KEY_RSTICK_UP)
+                if(Held & HidNpadButton_StickRUp)
                 {
                     move = false;
                     if(basestatus == 0)

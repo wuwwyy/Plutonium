@@ -108,13 +108,17 @@ namespace pu::ui
         s32 nb = 200;
         bool end = false;
         s32 initfact = 0;
+        auto app_ref = reinterpret_cast<Application*>(App);
         while(true)
         {
-            bool ok = ((Application*)App)->CallForRenderWithRenderOver([&](render::Renderer::Ref &Drawer) -> bool
+            bool ok = app_ref->CallForRenderWithRenderOver([&](render::Renderer::Ref &Drawer) -> bool
             {
-                u64 k = hidKeysDown(CONTROLLER_P1_AUTO);
-                u64 h = hidKeysHeld(CONTROLLER_P1_AUTO);
-                if((k & KEY_DLEFT) || (k & KEY_LSTICK_LEFT) || (h & KEY_RSTICK_LEFT))
+                const auto k = app_ref->GetButtonsDown();
+                const auto h = app_ref->GetButtonsHeld();
+                const auto tch_state = app_ref->GetTouchState();
+                const auto tch_x = tch_state.touches[0].x;
+                const auto tch_y = tch_state.touches[0].y;
+                if(k & HidNpadButton_AnyLeft)
                 {
                     if(this->osel > 0)
                     {
@@ -127,7 +131,7 @@ namespace pu::ui
                         }
                     }
                 }
-                else if((k & KEY_DRIGHT) || (k & KEY_LSTICK_RIGHT) || (h & KEY_RSTICK_RIGHT))
+                else if(k & HidNpadButton_AnyRight)
                 {
                     if(this->osel < (this->opts.size() - 1))
                     {
@@ -140,26 +144,26 @@ namespace pu::ui
                         }
                     }
                 }
-                else if(k & KEY_A)
+                if(k & HidNpadButton_A)
                 {
                     this->cancel = false;
                     end = true;
                 }
-                else if(k & KEY_B)
+                if(k & HidNpadButton_B)
                 {
                     this->cancel = true;
                     end = true;
                 }
-                else if(hidKeysDown(CONTROLLER_HANDHELD) & KEY_TOUCH)
+                if(tch_state.count > 0)
                 {
-                    touchPosition tch;
-                    hidTouchRead(&tch, 0);
                     for(s32 i = 0; i < this->opts.size(); i++)
                     {
+                        const auto tch_x = tch_state.touches[0].x;
+                        const auto tch_y = tch_state.touches[0].y;
                         const std::string txt = this->sopts[i];
                         s32 rx = elx + ((elemw + 20) * i);
                         s32 ry = ely;
-                        if(((rx + elemw) > tch.px) && (tch.px > rx) && ((ry + elemh) > tch.py) && (tch.py > ry))
+                        if(((rx + elemw) > tch_x) && (tch_x > rx) && ((ry + elemh) > tch_y) && (tch_y > ry))
                         {
                             this->osel = i;
                             this->cancel = false;
@@ -239,7 +243,7 @@ namespace pu::ui
             });
             if(!ok)
             {
-                ((Application*)App)->CallForRenderWithRenderOver([&](render::Renderer::Ref &Drawer) -> bool {});
+                app_ref->CallForRenderWithRenderOver([&](render::Renderer::Ref &Drawer) -> bool {});
                 break;
             }
         }
